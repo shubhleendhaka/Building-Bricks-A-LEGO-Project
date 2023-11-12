@@ -29,7 +29,7 @@ class NetworkGraph {
             .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
 
         // Hexagon properties
-        const hexRadius = 100;
+        const hexRadius = 125;
 
         // Function to generate hexagon points
         function hexagonPoints(x, y, radius) {
@@ -64,6 +64,56 @@ class NetworkGraph {
             .attr('y2', (d, i, nodes) => hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, hexRadius)[(i + 1) % nodes.length].y)
             .attr('stroke', d => d.color)
             .attr('stroke-width', '2');
+        // Make a theme color map and fill it out with themes and distinct colors
+        let colorMap = {
+            'Creator 3-in-1': 'red',
+            'Ninjago': 'orange',
+            'Friends': 'yellow',
+            'Harry Potter': 'green',
+            'Technic': 'blue',
+            'Start Wars': 'purple'
+        };
+
+
+        const circleData = [];
+
+        Object.keys(vis.data).forEach(d => {
+            // Generate random coordinates within the hexagon
+            let randomX, randomY;
+            do {
+                randomX = Math.random() * (2 * hexRadius) - hexRadius + vis.config.containerWidth / 2;
+                randomY = Math.random() * (2 * hexRadius) - hexRadius + vis.config.containerHeight / 2;
+            } while (!pointInHexagon(randomX, randomY, hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, hexRadius)));
+
+            circleData.push({ x: randomX, y: randomY, setNum: d });
+        });
+
+        function pointInHexagon(x, y, hexagonPoints) {
+            let isInside = false;
+            for (let i = 0, j = hexagonPoints.length - 1; i < hexagonPoints.length; j = i++) {
+                const xi = hexagonPoints[i].x, yi = hexagonPoints[i].y;
+                const xj = hexagonPoints[j].x, yj = hexagonPoints[j].y;
+
+                const intersect = ((yi > y) !== (yj > y)) &&
+                    (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+                if (intersect) isInside = !isInside;
+            }
+            return isInside;
+        }
+
+        svg.selectAll('.circle')
+            .data(circleData)
+            .enter().append('circle')
+            .attr('class', 'circle')
+            .attr('cx', d => d.x)
+            .attr('cy', d => d.y)
+            .attr('r', 2) // Set your desired radius
+            .attr('fill', d => colorMap[vis.data[d.setNum].theme_name] ? colorMap[vis.data[d.setNum].theme_name] : 'white')
+            .attr('stroke', 'black')
+            .attr('stroke-width', '1')
+            .on('mouseover', function (d) {
+                d3.select(this).raise();
+            })
 
 
 
