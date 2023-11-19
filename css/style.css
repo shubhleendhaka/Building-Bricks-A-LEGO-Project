@@ -6,7 +6,7 @@
 
 .selected-card {
     width: 30rem;
-    height: 15rem;
+    height: 14rem;
     display: flex;
     flex-direction: column;
     padding: 1rem;
@@ -17,6 +17,9 @@
 
 .card-title {
     margin: 0.5rem 0 0.5rem 0;
+    text-align: center;
+    text-decoration: underline;
+    margin: 0;
 }
 
 .card-content {
@@ -34,19 +37,34 @@
 }
 
 .card-info-titles {
+    height: 10rem;
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
+    margin: 0 0 0 0.5rem;
+}
+
+.card-info-titles h4 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 0;
 }
 
 .card-info {
+    height: 10rem;
     flex: 2;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
+}
+
+.card-info h5 {
+    margin: 0;
+
+    font-weight: 200;
 }
 
 /* Search + Pick for Me */
