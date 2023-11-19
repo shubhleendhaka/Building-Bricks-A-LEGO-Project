@@ -1,0 +1,30 @@
+/* Search + Pick for Me */
+#parent-search-container {
+  width: 15rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+#search-container {
+  display: inline-block;
+  width: auto;
+}
+
+label {
+  width: 3rem;
+}
+
+#search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+#pick-random {
+  width: 100%;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+}
