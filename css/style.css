@@ -1,3 +1,8 @@
+/* Hexagon */
+.circle:hover {
+    stroke-width: 1;
+}
+
 /* Selection Cards */
 .selection-cards {
     /* border: 1px solid red;

@@ -2,13 +2,13 @@ class NetworkGraph {
     constructor(_config, dispatcher, data) {
         this.config = {
             parentElement: _config.parentElement,
-            containerWidth: 400,
-            containerHeight: 400,
+            containerWidth: 600,
+            containerHeight: 600,
             margin: {
-                top: 30,
+                top: 0,
                 right: 5,
                 bottom: 20,
-                left: 30
+                left: 0
             }
         };
         this.dispatcher = dispatcher;
@@ -29,7 +29,7 @@ class NetworkGraph {
             .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
 
         // Hexagon properties
-        const hexRadius = 125;
+        const hexRadius = 300;
 
         // Function to generate hexagon points
         function hexagonPoints(x, y, radius) {
@@ -64,6 +64,7 @@ class NetworkGraph {
             .attr('y2', (d, i, nodes) => hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, hexRadius)[(i + 1) % nodes.length].y)
             .attr('stroke', d => d.color)
             .attr('stroke-width', '2');
+            
         // Make a theme color map and fill it out with themes and distinct colors
         let colorMap = {
             'Creator 3-in-1': 'red',
@@ -71,9 +72,8 @@ class NetworkGraph {
             'Friends': 'yellow',
             'Harry Potter': 'green',
             'Technic': 'blue',
-            'Start Wars': 'purple'
+            'Star Wars': 'purple'
         };
-
 
         const circleData = [];
 
@@ -84,7 +84,6 @@ class NetworkGraph {
                 randomX = Math.random() * (2 * hexRadius) - hexRadius + vis.config.containerWidth / 2;
                 randomY = Math.random() * (2 * hexRadius) - hexRadius + vis.config.containerHeight / 2;
             } while (!pointInHexagon(randomX, randomY, hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, hexRadius)));
-
             circleData.push({ x: randomX, y: randomY, setNum: d });
         });
 
@@ -101,22 +100,42 @@ class NetworkGraph {
             return isInside;
         }
 
+        // ! POINTS CHOSEN FOR STATIC VISUALIZATION FOR M3 (next 4 lines)
+        const hoverPoint = '30277-1';
+        const selectedPoint = '42089-1';
+        const attachedPoints = ['75094-1', '561508-1', '41135-1', '75046-1', '75033-1']
+        const staticPoints = [hoverPoint, selectedPoint, ...attachedPoints];
+        
         svg.selectAll('.circle')
             .data(circleData)
             .enter().append('circle')
             .attr('class', 'circle')
             .attr('cx', d => d.x)
             .attr('cy', d => d.y)
-            .attr('r', 2) // Set your desired radius
+            .attr('r', 3) // Set your desired radius
             .attr('fill', d => colorMap[vis.data[d.setNum].theme_name] ? colorMap[vis.data[d.setNum].theme_name] : 'white')
             .attr('stroke', 'black')
-            .attr('stroke-width', '1')
+            .attr('stroke-dasharray', d => d.setNum === '30277-1' ? '2, 1' : 'none') // ! STATIC VISUALIZATION FOR M3
+            .attr('stroke-width', d => staticPoints.includes(d.setNum) ? '1.5' : '0') // ! STATIC VISUALIZATION FOR M3
+            .attr('opacity', d => staticPoints.includes(d.setNum) ? '1' : '0.1') // ! STATIC VISUALIZATION FOR M3
             .on('mouseover', function (d) {
                 d3.select(this).raise();
             })
 
-
-
+        // ! LINES FOR STATIC VISUALIZATION FOR M3 (next 11 lines)
+        const selectedPointX = circleData.find(d => d.setNum === selectedPoint).x;
+        const selectedPointY = circleData.find(d => d.setNum === selectedPoint).y;
+        attachedPoints.forEach(pointId => {
+            const point = circleData.find(d => d.setNum === pointId);
+            svg.append('line')
+            .attr('x1', selectedPointX)
+            .attr('y1', selectedPointY)
+            .attr('x2', point.x)
+            .attr('y2', point.y)
+            .attr('stroke', 'black')
+            .attr('stroke-width', '0.5')
+            .lower();
+        })
 
     }
 
