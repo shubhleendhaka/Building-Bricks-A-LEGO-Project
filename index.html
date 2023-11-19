@@ -1,38 +1,61 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>D3 Project Starter Template</title>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="data:;base64,iVBORwOKGO=" />
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
+    <head>
+        <title>D3 Project Starter Template</title>
+        <meta charset="UTF-8" />
+        <link rel="icon" href="data:;base64,iVBORwOKGO=" />
+        <link rel="stylesheet" href="css/style.css" />
+    </head>
 
-  <body>
-    <!-- Add HTML content, SVG drawing area, ... -->
+    <body>
+        <!-- Add HTML content, SVG drawing area, ... -->
 
-    <div id="vis">
-      <div id="tooltip"></div>
-      <div id="network-graph-container"></div>
-    </div>
+        <div id="vis">
+            <div id="tooltip"></div>
+            <div id="network-graph-container"></div>
+        </div>
 
-    <div id="parent-search-container">
-      <label for="search-input">Search: </label>
-      <div id="search-container">
-        <input
-          type="text"
-          id="search-input"
-          name="search"
-          placeholder="Search for a set"
-        />
-        <button type="button" id="pick-random">Pick for me!</button>
-      </div>
-    </div>
+        <div class="selection-cards">
+            <div class="selected-card">
+                <h2 class="card-title">Boeing 787 Dreamliner</h2>
+                <div class="card-content">
+                    <img
+                        class="card-image"
+                        src="https://cdn.rebrickable.com/media/sets/10177-1.jpg"
+                    />
+                    <div class="card-info-titles">
+                        <h4>Year:</h4>
+                        <h4>Theme:</h4>
+                        <h4>Pieces:</h4>
+                    </div>
+                    <div class="card-info">
+                        <h5>2006</h5>
+                        <h5>Creator</h5>
+                        <h5>1197</h5>
+                    </div>
+                </div>
+            </div>
+            <div id="hovered-card"></div>
+        </div>
 
-    <!-- D3 bundle -->
-    <script src="js/d3.v6.min.js"></script>
+        <div id="parent-search-container">
+            <label for="search-input">Search: </label>
+            <div id="search-container">
+                <input
+                    type="text"
+                    id="search-input"
+                    name="search"
+                    placeholder="Search for a set"
+                />
+                <button type="button" id="pick-random">Pick for me!</button>
+            </div>
+        </div>
 
-    <!-- Our JS code -->
-    <script src="js/main.js"></script>
-    <script src="js/networkGraph.js"></script>
-  </body>
+        <!-- D3 bundle -->
+        <script src="js/d3.v6.min.js"></script>
+
+        <!-- Our JS code -->
+        <script src="js/main.js"></script>
+        <script src="js/networkGraph.js"></script>
+    </body>
 </html>

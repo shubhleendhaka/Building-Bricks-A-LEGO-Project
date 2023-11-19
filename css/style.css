@@ -1,30 +1,81 @@
+/* Selection Cards */
+.selection-cards {
+    border: 1px solid red;
+    padding: 1rem;
+}
+
+.selected-card {
+    width: 30rem;
+    height: 15rem;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border: 2px solid black;
+    border-radius: 5px;
+    justify-content: space-around;
+}
+
+.card-title {
+    margin: 0.5rem 0 0.5rem 0;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.card-image {
+    /* width: 10rem; */
+    height: 10rem;
+    border: 0.25rem solid black;
+    border-radius: 5px;
+    flex: 3;
+}
+
+.card-info-titles {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-info {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 /* Search + Pick for Me */
 #parent-search-container {
-  width: 15rem;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  gap: 1.5rem;
+    width: 15rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1.5rem;
 }
 
 #search-container {
-  display: inline-block;
-  width: auto;
+    display: inline-block;
+    width: auto;
 }
 
 label {
-  width: 3rem;
+    width: 3rem;
 }
 
 #search-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
 }
 
 #pick-random {
-  width: 100%;
-  padding: 0;
-  margin: 0.5rem 0 0 0;
+    width: 100%;
+    padding: 0;
+    margin: 0.5rem 0 0 0;
 }
