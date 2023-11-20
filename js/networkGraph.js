@@ -45,12 +45,12 @@ class NetworkGraph {
 
         // Hexagon data
         const hexagonData = [
-            { color: 'red', label: 'A' },
-            { color: 'orange', label: 'B' },
-            { color: 'yellow', label: 'C' },
-            { color: 'green', label: 'D' },
-            { color: 'blue', label: 'E' },
-            { color: 'purple', label: 'F' }
+            { color: '#fb8072', label: 'A' },   // Red
+            { color: '#fdb462', label: 'B' },   // Orange
+            { color: '#ffe45e', label: 'C' },   // Yellow
+            { color: '#8dd3c7', label: 'D' },   // Green
+            { color: '#80b1d3', label: 'E' },   // Blue
+            { color: '#bebada', label: 'F' }    // Purple
         ];
 
         // Draw hexagon edges
@@ -67,12 +67,12 @@ class NetworkGraph {
             
         // Make a theme color map and fill it out with themes and distinct colors
         let colorMap = {
-            'Creator 3-in-1': 'red',
-            'Ninjago': 'orange',
-            'Friends': 'yellow',
-            'Harry Potter': 'green',
-            'Technic': 'blue',
-            'Star Wars': 'purple'
+            'Creator 3-in-1': '#fb8072',    // Red
+            'Ninjago': '#fdb462',           // Orange
+            'Friends': '#ffe45e',           // Yellow
+            'Harry Potter': '#8dd3c7',      // Green
+            'Technic': '#80b1d3',           // Blue
+            'Star Wars': '#bebada'          // Purple
         };
 
         const circleData = [];
