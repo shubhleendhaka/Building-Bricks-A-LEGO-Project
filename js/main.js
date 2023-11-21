@@ -43,4 +43,11 @@ d3.csv("data/lego_data.csv").then((data) => {
         dispatcher,
         filteredData
     );
+
+    const heatMap = new HeatMap(
+        {
+            parentElement: d3.select("#heat-map-container"),
+        },
+        data
+    );
 });
