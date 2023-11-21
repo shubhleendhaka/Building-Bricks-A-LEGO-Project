@@ -50,9 +50,6 @@ class HeatMap {
             .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
 
         // Heat map blocks colour range
-        console.log(setSizes);
-        console.log(Math.min(...setSizes));
-        console.log(Math.max(...setSizes));
         vis.colorScale = d3.scaleLinear()
             .range(["white", "#69b3a2"])
             .domain([Math.min(...setSizes), Math.max(...setSizes)])
@@ -107,7 +104,7 @@ class HeatMap {
 
 
         let results = vis.chart.selectAll('.block')
-            .data(Array.from(vis.blockData, ([name, value]) => ({name, value})), d => {console.log(d.name+" "+d.value); return d.name;})
+            .data(Array.from(vis.blockData, ([name, value]) => ({name, value})), d => {return d.name;})
             .join('rect')
                 .attr('x', d => { return vis.xScale(d.name.split(':')[0]); })
                 .attr('y', d => { return vis.yScale(d.name.split(':')[1]); })

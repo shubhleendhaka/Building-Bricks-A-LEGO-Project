@@ -5,6 +5,7 @@ d3.csv("data/lego_data.csv").then((data) => {
         d.theme_id = +d.theme_id;
         d.set_num_parts = +d.set_num_parts;
         d.color_id = +d.color_id;
+        d.rgb = d.rgb // leaving rgb as string
     });
 
     const dispatcher = d3.dispatch(
@@ -47,6 +48,13 @@ d3.csv("data/lego_data.csv").then((data) => {
     const heatMap = new HeatMap(
         {
             parentElement: d3.select("#heat-map-container"),
+        },
+        data
+    );
+    // Instantiate ColorChart
+    const colorChart = new ColorChart(
+        {
+            parentElement: d3.select("#color-chart-container"),
         },
         data
     );
