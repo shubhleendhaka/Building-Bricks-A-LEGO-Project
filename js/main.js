@@ -5,7 +5,7 @@ d3.csv("data/lego_data.csv").then((data) => {
         d.theme_id = +d.theme_id;
         d.set_num_parts = +d.set_num_parts;
         d.color_id = +d.color_id;
-        d.rgb = d.rgb // leaving rgb as string
+        d.rgb = d.rgb; // leaving rgb as string
     });
 
     const dispatcher = d3.dispatch(
@@ -24,6 +24,7 @@ d3.csv("data/lego_data.csv").then((data) => {
         }
     });
 
+    // Search Input Listener
     d3.select("#search-input").on("keypress", (event) => {
         if (event.key === "Enter") {
             // TODO: Dispatch search event
@@ -32,6 +33,7 @@ d3.csv("data/lego_data.csv").then((data) => {
         }
     });
 
+    // Pick Random Listener
     d3.select("#pick-random").on("click", () => {
         // TODO: Dispatch random selection event
         console.log("Pick random button clicked!");
