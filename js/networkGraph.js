@@ -15,6 +15,8 @@ class NetworkGraph {
         this.data = data;
         this.initVis();
         this.cardData = [];
+        this.hoveredSet = null;
+        this.clickedSet = null;
     }
 
 
@@ -122,26 +124,37 @@ class NetworkGraph {
             .attr('stroke-width', d => staticPoints.includes(d.setNum) ? '1.5' : '0') // ! STATIC VISUALIZATION FOR M3
             .attr('opacity', d => staticPoints.includes(d.setNum) ? '1' : '0.1') // ! STATIC VISUALIZATION FOR M3
             .on('mouseover', function (event, d) {
-                d3.select(this).raise();
-                vis.cardData.push(d.setNum);
-                console.log(vis.cardData);
+                if (!d3.select(this).classed('clicked')) {
+
+                    d3.select(this).raise();
+                    vis.hoveredSet = d.setNum;
+                    console.log(vis.cardData);
+                    vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
+                }
             })
             .on('mouseout', function (event, d) {
-                const index = vis.cardData.indexOf(d.setNum);
-                if (index !== -1) {
-                    vis.cardData.splice(index, 1);
+                if (!d3.select(this).classed('clicked')) {
+                    vis.hoveredSet = null;
+                    console.log(vis.cardData);
+                    vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
                 }
-                console.log(vis.cardData);
             })
             .on('click', function (event, d) {
                 // Toggle presence of setNum in cardData
-                const index = vis.cardData.indexOf(d.setNum);
-                if (index !== -1) {
-                    vis.cardData.splice(index, 1);
-                } else {
-                    vis.cardData.push(d.setNum);
+
+                if (vis.clickedSet === d.setNum) {
+
+                    vis.clickedSet = null;
+                    vis.hoveredSet = d.setNum
+                    d3.select(this).classed('clicked', false);
                 }
-                console.log(vis.cardData);
+                else {
+                    vis.clickedSet = d.setNum;
+                    vis.hoveredSet = null;
+                    d3.select(this).classed('clicked', true);
+                }
+
+                vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
             });
 
 

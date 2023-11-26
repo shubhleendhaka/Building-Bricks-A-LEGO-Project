@@ -11,8 +11,15 @@ d3.csv("data/lego_data.csv").then((data) => {
     const dispatcher = d3.dispatch(
         "searchPoint",
         "randomPoint",
-        "selectedPoint"
+        "selectedPoint",
+        "cardData"
     );
+
+    dispatcher.on("cardData", (cardData) => {
+
+        console.log("Printing Card Data", cardData);
+
+    });
     const filteredData = {};
 
     data.forEach((d) => {

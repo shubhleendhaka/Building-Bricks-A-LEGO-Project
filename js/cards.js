@@ -21,6 +21,10 @@ class Cards {
     }
 
     initVis() {
+        this.updateVis()
+
+    }
+    updateVis() {
         const vis = this;
         const cardsHTML = `
             <div class="selected-card">
