@@ -14,7 +14,10 @@ class NetworkGraph {
         this.dispatcher = dispatcher;
         this.data = data;
         this.initVis();
+        this.cardData = [];
     }
+
+
 
     initVis() {
         let vis = this;
@@ -64,7 +67,7 @@ class NetworkGraph {
             .attr('y2', (d, i, nodes) => hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, hexRadius)[(i + 1) % nodes.length].y)
             .attr('stroke', d => d.color)
             .attr('stroke-width', '2');
-            
+
         // Make a theme color map and fill it out with themes and distinct colors
         let colorMap = {
             'Creator 3-in-1': '#fb8072',    // Red
@@ -105,7 +108,7 @@ class NetworkGraph {
         const selectedPoint = '42089-1';
         const attachedPoints = ['75094-1', '561508-1', '41135-1', '75046-1', '75033-1']
         const staticPoints = [hoverPoint, selectedPoint, ...attachedPoints];
-        
+
         svg.selectAll('.circle')
             .data(circleData)
             .enter().append('circle')
@@ -118,9 +121,29 @@ class NetworkGraph {
             .attr('stroke-dasharray', d => d.setNum === '30277-1' ? '2, 1' : 'none') // ! STATIC VISUALIZATION FOR M3
             .attr('stroke-width', d => staticPoints.includes(d.setNum) ? '1.5' : '0') // ! STATIC VISUALIZATION FOR M3
             .attr('opacity', d => staticPoints.includes(d.setNum) ? '1' : '0.1') // ! STATIC VISUALIZATION FOR M3
-            .on('mouseover', function (d) {
+            .on('mouseover', function (event, d) {
                 d3.select(this).raise();
+                vis.cardData.push(d.setNum);
+                console.log(vis.cardData);
             })
+            .on('mouseout', function (event, d) {
+                const index = vis.cardData.indexOf(d.setNum);
+                if (index !== -1) {
+                    vis.cardData.splice(index, 1);
+                }
+                console.log(vis.cardData);
+            })
+            .on('click', function (event, d) {
+                // Toggle presence of setNum in cardData
+                const index = vis.cardData.indexOf(d.setNum);
+                if (index !== -1) {
+                    vis.cardData.splice(index, 1);
+                } else {
+                    vis.cardData.push(d.setNum);
+                }
+                console.log(vis.cardData);
+            });
+
 
         // ! LINES FOR STATIC VISUALIZATION FOR M3 (next 11 lines)
         const selectedPointX = circleData.find(d => d.setNum === selectedPoint).x;
@@ -128,13 +151,13 @@ class NetworkGraph {
         attachedPoints.forEach(pointId => {
             const point = circleData.find(d => d.setNum === pointId);
             svg.append('line')
-            .attr('x1', selectedPointX)
-            .attr('y1', selectedPointY)
-            .attr('x2', point.x)
-            .attr('y2', point.y)
-            .attr('stroke', 'black')
-            .attr('stroke-width', '0.5')
-            .lower();
+                .attr('x1', selectedPointX)
+                .attr('y1', selectedPointY)
+                .attr('x2', point.x)
+                .attr('y2', point.y)
+                .attr('stroke', 'black')
+                .attr('stroke-width', '0.5')
+                .lower();
         })
 
     }
