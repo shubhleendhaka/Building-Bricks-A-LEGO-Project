@@ -15,11 +15,7 @@ d3.csv("data/lego_data.csv").then((data) => {
         "cardData"
     );
 
-    dispatcher.on("cardData", (cardData) => {
 
-        console.log("Printing Card Data", cardData);
-
-    });
     const filteredData = {};
 
     data.forEach((d) => {
@@ -45,6 +41,8 @@ d3.csv("data/lego_data.csv").then((data) => {
         // TODO: Dispatch random selection event
         console.log("Pick random button clicked!");
     });
+
+
 
     const networkGraph = new NetworkGraph(
         {
@@ -77,4 +75,11 @@ d3.csv("data/lego_data.csv").then((data) => {
         dispatcher,
         data
     );
+    dispatcher.on("cardData", (cardData) => {
+        console.log("Card Data", cardData);
+        cards.cardData = cardData;
+        cards.updateVis();
+    });
+
+
 });

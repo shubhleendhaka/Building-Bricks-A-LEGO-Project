@@ -128,14 +128,16 @@ class NetworkGraph {
 
                     d3.select(this).raise();
                     vis.hoveredSet = d.setNum;
-                    console.log(vis.cardData);
+                    console.log([vis.clickedSet, vis.hoveredSet]);
+
                     vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
                 }
             })
             .on('mouseout', function (event, d) {
                 if (!d3.select(this).classed('clicked')) {
                     vis.hoveredSet = null;
-                    console.log(vis.cardData);
+                    console.log([vis.clickedSet, vis.hoveredSet]);
+
                     vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
                 }
             })
@@ -153,7 +155,7 @@ class NetworkGraph {
                     vis.hoveredSet = null;
                     d3.select(this).classed('clicked', true);
                 }
-
+                console.log([vis.clickedSet, vis.hoveredSet]);
                 vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
             });
 
