@@ -1,83 +1,45 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>D3 Project Starter Template</title>
-        <meta charset="UTF-8" />
-        <link rel="icon" href="data:;base64,iVBORwOKGO=" />
-        <link rel="stylesheet" href="css/style.css" />
-    </head>
 
-    <body>
-        <!-- Add HTML content, SVG drawing area, ... -->
+<head>
+    <title>D3 Project Starter Template</title>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="data:;base64,iVBORwOKGO=" />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
 
-        <div id="vis">
-            <div id="tooltip"></div>
-            <div id="network-graph-container"></div>
-            <div id="color-chart-container"></div>
-            <div id="heat-map-container"></div>
+<body>
+    <!-- Add HTML content, SVG drawing area, ... -->
+
+    <div id="vis">
+        <div id="tooltip"></div>
+        <div id="network-graph-container"></div>
+        <div id="color-chart-container"></div>
+        <div id="heat-map-container"></div>
+    </div>
+
+    <div id="cards-container">
+
+    </div>
+
+    <div id="parent-search-container">
+        <label for="search-input">Search: </label>
+        <div id="search-container">
+            <input type="text" id="search-input" name="search" placeholder="Search for a set" />
+            <button type="button" id="pick-random">Pick for me!</button>
         </div>
+    </div>
 
-        <div class="selection-cards">
-            <div class="selected-card">
-                <h2 class="card-title">Power Boat</h2>
-                <div class="card-content">
-                    <img
-                        class="card-image"
-                        src="https://cdn.rebrickable.com/media/sets/42089-1.jpg"
-                    />
-                    <div class="card-info-titles">
-                        <h4>Year:</h4>
-                        <h4>Theme:</h4>
-                        <h4>Pieces:</h4>
-                    </div>
-                    <div class="card-info">
-                        <h5>2019</h5>
-                        <h5>Technic</h5>
-                        <h5>174</h5>
-                    </div>
-                </div>
-            </div>
-            <div class="hovered-card">
-                <h2 class="card-title">First Order Star Destroyer</h2>
-                <div class="card-content">
-                    <img
-                        class="card-image"
-                        src="https://cdn.rebrickable.com/media/sets/30277-1.jpg"
-                    />
-                    <div class="card-info-titles">
-                        <h4>Year:</h4>
-                        <h4>Theme:</h4>
-                        <h4>Pieces:</h4>
-                    </div>
-                    <div class="card-info">
-                        <h5>2016</h5>
-                        <h5>Star Wars</h5>
-                        <h5>56</h5>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- D3 bundle -->
+    <script src="js/d3.v6.min.js"></script>
 
-        <div id="parent-search-container">
-            <label for="search-input">Search: </label>
-            <div id="search-container">
-                <input
-                    type="text"
-                    id="search-input"
-                    name="search"
-                    placeholder="Search for a set"
-                />
-                <button type="button" id="pick-random">Pick for me!</button>
-            </div>
-        </div>
+    <!-- Our JS code -->
+    <script src="js/networkGraph.js"></script>
+    <script src="js/colorChart.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/heatMap.js"></script>
+    <script src="js/cards.js"></script>
 
-        <!-- D3 bundle -->
-        <script src="js/d3.v6.min.js"></script>
+</body>
 
-        <!-- Our JS code -->
-        <script src="js/networkGraph.js"></script>
-        <script src="js/colorChart.js"></script>
-        <script src="js/main.js"></script>
-        <script src="js/heatMap.js"></script>
-    </body>
 </html>

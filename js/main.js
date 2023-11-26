@@ -60,4 +60,14 @@ d3.csv("data/lego_data.csv").then((data) => {
         },
         data
     );
+
+
+    // Instantiate Cards
+    const cards = new Cards(
+        {
+            parentElement: d3.select("#cards-container"),
+        },
+        dispatcher,
+        data
+    );
 });
