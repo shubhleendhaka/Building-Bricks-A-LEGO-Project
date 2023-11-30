@@ -1,10 +1,27 @@
 d3.csv("data/hexagon_data.csv").then((data) => {
     // make a set of all the themes that are in the data
+
     const themes = new Set();
+
+
 
     data.forEach((d) => {
         // d.top_5_similar_sets = JSON.parse(d.top_5_similar_sets);
         themes.add(d.theme_name);
+
+        let csvString = d.top_5_similar_sets;
+
+        // Remove square brackets and single quotes, then split by commas
+        const values = csvString.replace(/[\[\]']+/g, '').split(', ');
+
+        // Convert the array elements to JSON format
+        const jsonArrayString = JSON.stringify(values);
+
+        // Parse the JSON array string into an actual JavaScript array
+        const jsonArray = JSON.parse(jsonArrayString);
+
+        d.top_5_similar_sets = jsonArray;
+
 
         Object.keys(d).forEach((key) => {
             if (key !== 'id' && key !== 'set_num' && key !== 'top_5_similar_sets' && key !== 'set_name' && key !== 'img_url' && key !== 'theme_name') {
@@ -16,6 +33,8 @@ d3.csv("data/hexagon_data.csv").then((data) => {
 
 
     });
+
+
 
     console.log("Themes are ", themes);
     const dispatcher = d3.dispatch(
