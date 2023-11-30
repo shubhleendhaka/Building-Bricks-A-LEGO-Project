@@ -47,7 +47,8 @@ d3.csv("data/hexagon_data.csv").then((data) => {
         "searchPoint",
         "randomPoint",
         "selectedPoint",
-        "cardData"
+        "cardData",
+        "selectedColors"
     );
 
     const cards = new Cards(
@@ -71,6 +72,7 @@ d3.csv("data/hexagon_data.csv").then((data) => {
         {
             parentElement: d3.select("#color-chart-container"),
         },
+        dispatcher,
         colorData // Use the transformed color data here
     );
 
@@ -97,14 +99,44 @@ d3.csv("data/hexagon_data.csv").then((data) => {
             }
         }
 
+
         console.log("Active Colors", activeColors);
         colorChart.activeColors = activeColors;
+        colorChart.selectedColors = new Set();
         colorChart.updateChart(colorData);
 
 
 
     });
 
+
+
+    dispatcher.on("selectedColors", (selectedColors) => {
+
+        colorChart.selectedColors = selectedColors;
+
+        colorChart.activeColors = new Set();
+
+        colorChart.updateChart(colorData);
+
+        let filteredData = networkGraph.data.filter(point => {
+            // Check if the value for each of the selected colors is 1
+            for (let color of selectedColors) {
+                if (point[color] !== 1) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        console.log("filtered data length", filteredData.length)
+        console.log("filtered data", filteredData)
+
+        // networkGraph.data = filteredData;
+        // networkGraph.updateVis();
+
+
+    });
 
 
     // Instantiate the ColorChart with the transformed color data
