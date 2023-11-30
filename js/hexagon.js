@@ -133,24 +133,33 @@ class Hexagon {
                 // Toggle presence of setNum in cardData
                 if (vis.clickedSet === d.setNum) {
                     vis.clickedSet = null;
+                    vis.hoveredSet = d.setNum
                 } else {
                     vis.clickedSet = d.setNum;
+                    vis.hoveredSet = null;
                 }
-                console.log([vis.clickedSet, vis.hoveredSet]);
                 vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
-
                 vis.updateVis();
+
+
             })
             .on('mouseover', function (event, d) {
-                vis.hoveredSet = d.setNum;
-                vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
+                if (vis.clickedSet !== d.setNum) {
+                    vis.hoveredSet = d.setNum;
 
-                vis.updateVis();
+                    vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
+                    vis.updateVis();
+
+
+
+                }
             })
             .on('mouseout', function (event, d) {
                 vis.hoveredSet = null;
+
                 vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
                 vis.updateVis();
+
             });
 
 
