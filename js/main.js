@@ -24,7 +24,7 @@ d3.csv("data/hexagon_data.csv").then((data) => {
 
 
         Object.keys(d).forEach((key) => {
-            if (key !== 'id' && key !== 'set_num' && key !== 'top_5_similar_sets' && key !== 'set_name' && key !== 'img_url' && key !== 'theme_name') {
+            if (key !== 'id' && key !== 'set_num' && key !== 'top_5_similar_sets' && key !== 'set_name' && key !== 'set_img_url' && key !== 'theme_name') {
                 d[key] = +d[key];
             }
 
