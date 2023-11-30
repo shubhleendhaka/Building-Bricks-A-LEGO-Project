@@ -28,7 +28,7 @@ d3.csv("data/hexagon_data.csv").then((data) => {
                 d[key] = +d[key];
             }
 
-            
+
         });
     });
 
@@ -37,6 +37,8 @@ d3.csv("data/hexagon_data.csv").then((data) => {
 
     // Transform the column names into the expected format for ColorChart
     const colorData = rgbColumns.map(color => ({ rgb: color }));
+
+    console.log("Color Data", colorData);
 
 
 
@@ -55,11 +57,6 @@ d3.csv("data/hexagon_data.csv").then((data) => {
         dispatcher,
         data
     );
-    dispatcher.on("cardData", (cardData) => {
-        console.log("Card Data", cardData);
-        cards.cardData = cardData;
-        cards.updateVis();
-    });
 
     const networkGraph = new Hexagon(
         {
@@ -69,13 +66,48 @@ d3.csv("data/hexagon_data.csv").then((data) => {
         data
     );
 
-    // Instantiate the ColorChart with the transformed color data
+
     const colorChart = new ColorChart(
         {
             parentElement: d3.select("#color-chart-container"),
         },
         colorData // Use the transformed color data here
     );
+
+    dispatcher.on("cardData", (cardData) => {
+        console.log("Card Data", cardData);
+        cards.cardData = cardData;
+        cards.updateVis();
+
+        let activeColors = new Set();
+
+        for (let i = 0; i < cardData.length; i++) {
+
+            if (cardData[i] !== null) {
+
+                const currentCard = data[cardData[i]];
+                for (let column of rgbColumns) {
+
+                    if (currentCard[column]) {
+                        activeColors.add(column);
+
+                    }
+                }
+
+            }
+        }
+
+        console.log("Active Colors", activeColors);
+        colorChart.activeColors = activeColors;
+        colorChart.updateChart(colorData);
+
+
+
+    });
+
+
+
+    // Instantiate the ColorChart with the transformed color data
 
 
 
@@ -135,7 +167,7 @@ d3.csv("data/lego_data.csv").then((data) => {
         },
         data
     );
-    
+
 
     // Instantiate Cards
     const cards = new Cards(
