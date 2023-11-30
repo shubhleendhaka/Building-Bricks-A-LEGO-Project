@@ -17,6 +17,7 @@ class Hexagon {
         this.cardData = [];
         this.hoveredSet = null;
         this.clickedSet = null;
+        this.attachedPoints = null;
     }
 
 
@@ -81,7 +82,7 @@ class Hexagon {
 
         // Make a theme color map and fill it out with themes and distinct colors
 
-        const circleData = [];
+        vis.circleData = [];
 
         console.log(vis.data);
         console.log(Object.values(vis.data)[0]);
@@ -93,7 +94,7 @@ class Hexagon {
                 randomX = Math.random() * (2 * hexRadius) - hexRadius + vis.config.containerWidth / 2;
                 randomY = Math.random() * (2 * hexRadius) - hexRadius + vis.config.containerHeight / 2;
             } while (!pointInHexagon(randomX, randomY, hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, hexRadius)));
-            circleData.push({ x: randomX, y: randomY, setNum: d });
+            vis.circleData.push({ x: randomX, y: randomY, setNum: d });
         });
 
         function pointInHexagon(x, y, hexagonPoints) {
@@ -112,14 +113,14 @@ class Hexagon {
         // ! POINTS CHOSEN FOR STATIC VISUALIZATION FOR M3 (next 4 lines)
         const hoverPoint = '30277-1';
         const selectedPoint = '42089-1';
-        const attachedPoints = ['75094-1', '561508-1', '41135-1', '75046-1', '75033-1']
+        // const attachedPoints = ['75094-1', '561508-1', '41135-1', '75046-1', '75033-1']
         // const staticPoints = [hoverPoint, selectedPoint, ...attachedPoints];
         let staticPoints = []
 
 
 
         vis.svg.selectAll('.circle')
-            .data(circleData)
+            .data(vis.circleData)
             .enter().append('circle')
             .attr('class', 'circle')
             .attr('cx', d => d.x)
@@ -128,14 +129,19 @@ class Hexagon {
             .attr('fill', d => colorMap[vis.data[d.setNum].theme_name] ? colorMap[vis.data[d.setNum].theme_name] : 'white')
             .attr('stroke', 'black')
             .attr('stroke-dasharray', d => d.setNum === '30277-1' ? '2, 1' : 'none') // ! STATIC VISUALIZATION FOR M3
-            .attr('stroke-width', d => staticPoints.includes(d.setNum) ? '1.5' : '0') // ! STATIC VISUALIZATION FOR M3
+            .attr('stroke-width', '0') // ! STATIC VISUALIZATION FOR M3
             .on('click', function (event, d) {
                 // Toggle presence of setNum in cardData
                 if (vis.clickedSet === d.setNum) {
                     vis.clickedSet = null;
+                    vis.attachedPoints = []
                     vis.hoveredSet = d.setNum
                 } else {
                     vis.clickedSet = d.setNum;
+                    // raise point
+                    d3.select(this).raise();
+                    vis.attachedPoints = vis.data[vis.clickedSet].top_5_similar_sets;
+
                     vis.hoveredSet = null;
                 }
                 vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
@@ -146,6 +152,7 @@ class Hexagon {
             .on('mouseover', function (event, d) {
                 if (vis.clickedSet !== d.setNum) {
                     vis.hoveredSet = d.setNum;
+                    d3.select(this).raise();
 
                     vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
                     vis.updateVis();
@@ -165,38 +172,69 @@ class Hexagon {
 
 
 
-        // // ! LINES FOR STATIC VISUALIZATION FOR M3 (next 11 lines)
-        // const selectedPointX = circleData.find(d => d.setNum === selectedPoint).x;
-        // const selectedPointY = circleData.find(d => d.setNum === selectedPoint).y;
-        // attachedPoints.forEach(pointId => {
-        //     const point = circleData.find(d => d.setNum === pointId);
-        //     svg.append('line')
-        //         .attr('x1', selectedPointX)
-        //         .attr('y1', selectedPointY)
-        //         .attr('x2', point.x)
-        //         .attr('y2', point.y)
-        //         .attr('stroke', 'black')
-        //         .attr('stroke-width', '0.5')
-        //         .lower();
-        // })
+
 
     }
 
     updateVis() {
         // Update visualization if needed
         let vis = this;
+
+
+
+
+        console.log("Clicked set is " + vis.clickedSet);
+        // console.log("Top 5", vis.data[vis.clickedSet].top_5_similar_sets)
+        console.log("Attached Points ", vis.attachedPoints)
+        // // ! LINES FOR STATIC VISUALIZATION FOR M3 (next 11 lines)
+
+        // vis.svg.selectAll('.line').remove();
+        if (this.clickedSet !== null) {
+            const selectedPointX = vis.circleData.find(d => d.setNum === vis.clickedSet).x;
+            const selectedPointY = vis.circleData.find(d => d.setNum === vis.clickedSet).y;
+            vis.attachedPoints.forEach(pointId => {
+                console.log("Point ID", pointId)
+
+                const point = vis.circleData.find(d => vis.data[d.setNum].set_num === pointId);
+                vis.svg.append('line')
+                    .attr('x1', selectedPointX)
+                    .attr('y1', selectedPointY)
+                    .attr('x2', point.x)
+                    .attr('y2', point.y)
+                    .attr('stroke', 'black')
+                    .attr('stroke-width', '0.5')
+                    .lower();
+            })
+        }
+
         vis.svg.selectAll('.circle')
             .attr('opacity', function (d) {
-                if (vis.clickedSet == null || vis.clickedSet === d.setNum || vis.hoveredSet === d.setNum) {
+                if (vis.clickedSet == null || vis.clickedSet === d.setNum || vis.hoveredSet === d.setNum || vis.attachedPoints.includes(vis.data[d.setNum].set_num)) {
                     return '1';
                 } else {
                     return '0.2';
                 }
+            })
+            .attr('stroke-width', function (d) {
+                if (vis.clickedSet === d.setNum || vis.attachedPoints.includes(vis.data[d.setNum].set_num)) {
+                    return 1.5;
+                } else return 0
+            })
+            .attr('stroke-dasharray', function (d) {
+                if (vis.hoveredSet === d.setNum) {
+                    return '2, 1';
+                } else return 'none'
             });
+
+
+        vis.renderVis();
     }
 
     renderVis() {
         // Render visualization if needed
+
+
+
     }
 }
 
