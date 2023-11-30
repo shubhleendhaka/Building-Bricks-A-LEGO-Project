@@ -55,7 +55,8 @@ class Cards {
                 <div class="selected-card">
                     <h2 class="card-title">${currentCard.set_name}</h2>
                     <div class="card-content">
-                    <img class="card-image" src="https://cdn.rebrickable.com/media/sets/42089-1.jpg" />                        <div class="card-info-titles        ">
+                    <img class="card-image" src=${currentCard.set_img_url} /> 
+                        <div class="card-info-titles">
                             <h4>Year:</h4>
                             <h4>Theme:</h4>
                             <h4>Pieces:</h4>
