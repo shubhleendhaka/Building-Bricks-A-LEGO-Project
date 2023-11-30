@@ -1,3 +1,56 @@
+d3.csv("data/hexagon_data.csv").then((data) => {
+    // make a set of all the themes that are in the data
+    const themes = new Set();
+
+    data.forEach((d) => {
+        // d.top_5_similar_sets = JSON.parse(d.top_5_similar_sets);
+        themes.add(d.theme_name);
+
+        Object.keys(d).forEach((key) => {
+            if (key !== 'id' && key !== 'set_num' && key !== 'top_5_similar_sets' && key !== 'set_name' && key !== 'img_url' && key !== 'theme_name') {
+                d[key] = +d[key];
+            }
+        });
+
+
+
+
+    });
+
+    console.log("Themes are ", themes);
+    const dispatcher = d3.dispatch(
+        "searchPoint",
+        "randomPoint",
+        "selectedPoint",
+        "cardData"
+    );
+
+    const cards = new Cards(
+        {
+            parentElement: d3.select("#cards-container"),
+        },
+        dispatcher,
+        data
+    );
+    dispatcher.on("cardData", (cardData) => {
+        console.log("Card Data", cardData);
+        cards.cardData = cardData;
+        cards.updateVis();
+    });
+
+    const networkGraph = new Hexagon(
+        {
+            parentElement: d3.select("#hexagon-container"),
+        },
+        dispatcher,
+        data
+    );
+
+
+
+});
+
+
 d3.csv("data/lego_data.csv").then((data) => {
     // Convert columns to numerical values
     data.forEach((d) => {
@@ -14,7 +67,6 @@ d3.csv("data/lego_data.csv").then((data) => {
         "selectedPoint",
         "cardData"
     );
-
 
     const filteredData = {};
 

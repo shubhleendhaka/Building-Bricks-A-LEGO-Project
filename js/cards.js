@@ -29,10 +29,10 @@ class Cards {
     updateVis() {
         const vis = this;
         console.log("Updating Cards");
+        this.filteredCards = this.data.filter(d => vis.cardData.includes(d.set_num));
 
         //     FROM VIS.data only get items where the set_num is in vis.cardData
-        this.filteredCards = vis.data.filter(d => vis.cardData.includes(d.set_num));
-        console.log(this.filteredCards.length);
+        console.log(vis.filteredCards);
 
         //     console.log(vis.filteredCards);
 
@@ -45,31 +45,31 @@ class Cards {
 
         // Append the generated HTML to the parent element
         let cardsHTML = '';
-        for (let i = 0; i < vis.filteredCards.length; i++) {
-            cardsHTML += `
-                <div class="selected-card">
-                    <h2 class="card-title">Power Boat</h2>
-                    <div class="card-content">
-                        <img class="card-image" src="https://cdn.rebrickable.com/media/sets/42089-1.jpg" />
-                        <div class="card-info-titles        ">
-                            <h4>Year:</h4>
-                            <h4>Theme:</h4>
-                            <h4>Pieces:</h4>
-                        </div>
-                        <div class="card-info">
-                            <h5>${vis.filteredCards[i].set_year}</h5>
-                            <h5>${vis.filteredCards[i].theme_id}</h5>
-                            <h5>${vis.filteredCards[i].set_num_parts}</h5>
-                        </div>
-                    </div>
-                </div>
-                </div>
-            `
+        // for (let i = 0; i < vis.cardData.length; i++) {
+        //     cardsHTML += `
+        //         <div class="selected-card">
+        //             <h2 class="card-title">${vis.cardData[i].set_name}</h2>
+        //             <div class="card-content">
+        //                 <img class="card-image" src=${vis.cardData[i].set_img_url} />
+        //                 <div class="card-info-titles        ">
+        //                     <h4>Year:</h4>
+        //                     <h4>Theme:</h4>
+        //                     <h4>Pieces:</h4>
+        //                 </div>
+        //                 <div class="card-info">
+        //                     <h5>${vis.cardData[i].set_year}</h5>
+        //                     <h5>${vis.cardData[i].theme_id}</h5>
+        //                     <h5>${vis.cardData[i].num_parts}</h5>
+        //                 </div>
+        //             </div>
+        //         </div>
+        //         </div>
+        //     `
 
 
 
-        }
-        vis.config.parentElement.html(cardsHTML);
+        // }
+        // vis.config.parentElement.html(cardsHTML);
 
     }
 }
