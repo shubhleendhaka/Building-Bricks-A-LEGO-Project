@@ -115,13 +115,7 @@ d3.csv("data/lego_data.csv").then((data) => {
 
 
 
-    const networkGraph = new NetworkGraph(
-        {
-            parentElement: d3.select("#network-graph-container"),
-        },
-        dispatcher,
-        filteredData
-    );
+
 
     const heatMap = new HeatMap(
         {

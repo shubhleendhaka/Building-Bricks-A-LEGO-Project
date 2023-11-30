@@ -17,7 +17,7 @@ class Hexagon {
         this.cardData = [];
         this.hoveredSet = null;
         this.clickedSet = null;
-        this.attachedPoints = null;
+        this.attachedPoints = [];
     }
 
 
@@ -189,23 +189,42 @@ class Hexagon {
         // // ! LINES FOR STATIC VISUALIZATION FOR M3 (next 11 lines)
 
         // vis.svg.selectAll('.line').remove();
-        if (this.clickedSet !== null) {
-            const selectedPointX = vis.circleData.find(d => d.setNum === vis.clickedSet).x;
-            const selectedPointY = vis.circleData.find(d => d.setNum === vis.clickedSet).y;
-            vis.attachedPoints.forEach(pointId => {
-                console.log("Point ID", pointId)
+        const selectedPointX = this.clickedSet ? vis.circleData.find(d => d.setNum === vis.clickedSet).x : null;
+        const selectedPointY = this.clickedSet ? vis.circleData.find(d => d.setNum === vis.clickedSet).y : null;
+        const points = []
+        vis.attachedPoints.forEach(pointId => {
+            console.log("Point ID", pointId)
 
-                const point = vis.circleData.find(d => vis.data[d.setNum].set_num === pointId);
-                vis.svg.append('line')
-                    .attr('x1', selectedPointX)
-                    .attr('y1', selectedPointY)
-                    .attr('x2', point.x)
-                    .attr('y2', point.y)
-                    .attr('stroke', 'black')
-                    .attr('stroke-width', '0.5')
-                    .lower();
-            })
-        }
+            const point = vis.circleData.find(d => vis.data[d.setNum].set_num === pointId);
+            points.push(point)
+
+        })
+        console.log("Points", points)
+        // vis.svg.selectAll('.connector').remove();
+
+
+        // Bind data
+        let lines = vis.svg.selectAll('.connector')
+            .data(points, d => d.setNum); // Use a unique identifier for each data point
+
+        // Enter new lines
+        let newLines = lines.enter()
+            .append('line')
+            .attr('class', 'connector');
+
+        // Update existing lines and add attributes to new lines
+        lines.merge(newLines)
+            .attr('x1', selectedPointX)
+            .attr('y1', selectedPointY)
+            .attr('x2', d => d.x)
+            .attr('y2', d => d.y)
+            .attr('stroke', 'black')
+            .attr('stroke-width', '0.5')
+            .lower();
+
+        // Exit and remove unused lines
+        lines.exit().remove();
+
 
         vis.svg.selectAll('.circle')
             .attr('opacity', function (d) {
