@@ -27,12 +27,16 @@ d3.csv("data/hexagon_data.csv").then((data) => {
             if (key !== 'id' && key !== 'set_num' && key !== 'top_5_similar_sets' && key !== 'set_name' && key !== 'img_url' && key !== 'theme_name') {
                 d[key] = +d[key];
             }
+
+            
         });
-
-
-
-
     });
+
+    // Extract the RGB color column names
+    const rgbColumns = data.columns.filter(column => column.match(/[0-9A-Fa-f]{6}/));
+
+    // Transform the column names into the expected format for ColorChart
+    const colorData = rgbColumns.map(color => ({ rgb: color }));
 
 
 
@@ -63,6 +67,14 @@ d3.csv("data/hexagon_data.csv").then((data) => {
         },
         dispatcher,
         data
+    );
+
+    // Instantiate the ColorChart with the transformed color data
+    const colorChart = new ColorChart(
+        {
+            parentElement: d3.select("#color-chart-container"),
+        },
+        colorData // Use the transformed color data here
     );
 
 
@@ -123,14 +135,7 @@ d3.csv("data/lego_data.csv").then((data) => {
         },
         data
     );
-    // Instantiate ColorChart
-    const colorChart = new ColorChart(
-        {
-            parentElement: d3.select("#color-chart-container"),
-        },
-        data
-    );
-
+    
 
     // Instantiate Cards
     const cards = new Cards(
