@@ -48,7 +48,7 @@ class Cards {
             if (vis.cardData[i] !== null) {
                 console.log("Current Card", vis.data[vis.cardData[i]])
 
-                let currentCard = vis.data[vis.cardData[i]];
+                let currentCard = vis.cardData[i];
 
 
                 cardsHTML += `

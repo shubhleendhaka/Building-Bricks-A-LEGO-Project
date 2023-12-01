@@ -87,7 +87,7 @@ d3.csv("data/hexagon_data.csv").then((data) => {
 
             if (cardData[i] !== null) {
 
-                const currentCard = data[cardData[i]];
+                const currentCard = cardData[i];
                 for (let column of rgbColumns) {
 
                     if (currentCard[column]) {
@@ -102,7 +102,7 @@ d3.csv("data/hexagon_data.csv").then((data) => {
 
         console.log("Active Colors", activeColors);
         colorChart.activeColors = activeColors;
-        colorChart.selectedColors = new Set();
+        // colorChart.selectedColors = new Set();
         colorChart.updateChart(colorData);
 
 
@@ -114,12 +114,13 @@ d3.csv("data/hexagon_data.csv").then((data) => {
     dispatcher.on("selectedColors", (selectedColors) => {
 
         colorChart.selectedColors = selectedColors;
+        console.log("Selected Colors are", selectedColors);
 
         colorChart.activeColors = new Set();
 
         colorChart.updateChart(colorData);
 
-        let filteredData = networkGraph.data.filter(point => {
+        let filteredData = data.filter(point => {
             // Check if the value for each of the selected colors is 1
             for (let color of selectedColors) {
                 if (point[color] !== 1) {
@@ -133,6 +134,8 @@ d3.csv("data/hexagon_data.csv").then((data) => {
         console.log("filtered data", filteredData)
 
         networkGraph.data = filteredData;
+        // networkGraph.clickedSet = null;
+        // networkGraph.attachedPoints = [];
         networkGraph.updateVis();
 
 

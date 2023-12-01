@@ -61,6 +61,7 @@ class ColorChart {
                 return `translate(${x},${y})`;
             })
             .on('click', function (event, d) {
+                console.log("Clicked on ", chart.selectedColors);
                 chart.activeColors = new Set();
 
                 if (chart.selectedColors.has(d)) {
