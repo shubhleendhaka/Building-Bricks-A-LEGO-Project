@@ -1,5 +1,5 @@
 class ColorChart {
-    constructor(_config, data) {
+    constructor(_config, dispatcher, data) {
         this.config = {
             parentElement: _config.parentElement,
             containerWidth: 625,
@@ -9,7 +9,9 @@ class ColorChart {
             gap: 4 // Gap between squares
         };
         this.data = data;
+        this.dispatcher = dispatcher;
         this.activeColors = new Set();
+        this.selectedColors = new Set();
         this.initChart();
 
     }
@@ -57,6 +59,22 @@ class ColorChart {
                 let x = (i % squaresPerRow) * (chart.config.squareSize + chart.config.gap);
                 let y = Math.floor(i / squaresPerRow) * (chart.config.squareSize + chart.config.gap);
                 return `translate(${x},${y})`;
+            })
+            .on('click', function (event, d) {
+                chart.activeColors = new Set();
+
+                if (chart.selectedColors.has(d)) {
+
+                    chart.selectedColors.delete(d);
+                } else {
+                    chart.selectedColors.add(d);
+                }
+                chart.updateOpacity();
+                chart.dispatcher.call('selectedColors', event, chart.selectedColors);
+
+
+
+                console.log("Clicked on ", chart.selectedColors);
             });
 
         console.log("Unique Colors")
@@ -107,17 +125,19 @@ class ColorChart {
 
     updateOpacity() {
         let chart = this;
-        chart.svg.selectAll('.lego-group rect')
+        chart.svg.selectAll('.lego-group')
             .attr('opacity', d => {
                 console.log('Setting opacity');
-                return chart.activeColors.size === 0 || chart.activeColors.has(d) ? 1 : 0.2;
+                if (chart.activeColors.size === 0 && chart.selectedColors.size === 0) {
+                    return 1
+                } else if (chart.activeColors.has(d) || chart.selectedColors.has(d)) {
+                    return 1;
+                } else {
+                    return 0.2;
+                }
             });
 
-        chart.svg.selectAll('.lego-group circle')
-            .attr('opacity', d => {
-                console.log('Setting opacity for circles');
-                return chart.activeColors.size === 0 || chart.activeColors.has(d) ? 1 : 0;
-            });
+
     }
 
     // Method to update chart if needed
