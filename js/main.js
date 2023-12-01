@@ -132,8 +132,8 @@ d3.csv("data/hexagon_data.csv").then((data) => {
         console.log("filtered data length", filteredData.length)
         console.log("filtered data", filteredData)
 
-        // networkGraph.data = filteredData;
-        // networkGraph.updateVis();
+        networkGraph.data = filteredData;
+        networkGraph.updateVis();
 
 
     });

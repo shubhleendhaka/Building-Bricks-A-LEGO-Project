@@ -89,7 +89,6 @@ class ColorChart {
             .attr('stroke', d => darkenColor(`#${d}`)) // Darken the fill color for the stroke
             .attr('stroke-width', 1.75)
             .attr('opacity', d => {
-                console.log('Setting opacity');
                 console.log(chart.activeColors.size === 0 || chart.activeColors.has(d));
                 return chart.activeColors.size === 0 || chart.activeColors.has(d) ? 1 : 0.2;
             });
@@ -127,7 +126,6 @@ class ColorChart {
         let chart = this;
         chart.svg.selectAll('.lego-group')
             .attr('opacity', d => {
-                console.log('Setting opacity');
                 if (chart.activeColors.size === 0 && chart.selectedColors.size === 0) {
                     return 1
                 } else if (chart.activeColors.has(d) || chart.selectedColors.has(d)) {

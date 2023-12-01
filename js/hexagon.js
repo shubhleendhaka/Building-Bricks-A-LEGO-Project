@@ -13,14 +13,37 @@ class Hexagon {
         };
         this.dispatcher = dispatcher;
         this.data = data;
-        this.initVis();
         this.cardData = [];
         this.hoveredSet = null;
         this.clickedSet = null;
         this.attachedPoints = [];
+        this.initVis();
+
     }
 
+    hexagonPoints(x, y, radius) {
+        const points = [];
+        for (let i = 0; i < 6; i++) {
+            const angle = (2 * Math.PI / 6) * i;
+            const pointX = x + radius * Math.cos(angle);
+            const pointY = y + radius * Math.sin(angle);
+            points.push({ x: pointX, y: pointY });
+        }
+        return points;
+    }
 
+    pointInHexagon(x, y, hexagonPoints) {
+        let isInside = false;
+        for (let i = 0, j = hexagonPoints.length - 1; i < hexagonPoints.length; j = i++) {
+            const xi = hexagonPoints[i].x, yi = hexagonPoints[i].y;
+            const xj = hexagonPoints[j].x, yj = hexagonPoints[j].y;
+
+            const intersect = ((yi > y) !== (yj > y)) &&
+                (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+            if (intersect) isInside = !isInside;
+        }
+        return isInside;
+    }
 
     initVis() {
         let vis = this;
@@ -35,22 +58,13 @@ class Hexagon {
             .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
 
         // Hexagon properties
-        const hexRadius = 300;
+        vis.hexRadius = 300;
 
         // Function to generate hexagon points
-        function hexagonPoints(x, y, radius) {
-            const points = [];
-            for (let i = 0; i < 6; i++) {
-                const angle = (2 * Math.PI / 6) * i;
-                const pointX = x + radius * Math.cos(angle);
-                const pointY = y + radius * Math.sin(angle);
-                points.push({ x: pointX, y: pointY });
-            }
-            return points;
-        }
+
 
         // Hexagon data
-        const hexagonData = [
+        vis.hexagonData = [
             { color: '#fb8072', label: 'A' },   // Red
             { color: '#fdb462', label: 'B' },   // Orange
             { color: '#ffe45e', label: 'C' },   // Yellow
@@ -59,7 +73,7 @@ class Hexagon {
             { color: '#bebada', label: 'F' }    // Purple
         ];
 
-        let colorMap = {
+        vis.colorMap = {
             'Books': '#fb8072',    // Red
             'Key Chain': '#fdb462',           // Orange
             'Friends': '#ffe45e',           // Yellow
@@ -69,55 +83,44 @@ class Hexagon {
         };
 
         // Draw hexagon edges
-        vis.svg.selectAll('.edge')
-            .data(hexagonData)
-            .enter().append('line')
-            .attr('class', 'edge')
-            .attr('x1', (d, i) => hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, hexRadius)[i].x)
-            .attr('y1', (d, i) => hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, hexRadius)[i].y)
-            .attr('x2', (d, i, nodes) => hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, hexRadius)[(i + 1) % nodes.length].x)
-            .attr('y2', (d, i, nodes) => hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, hexRadius)[(i + 1) % nodes.length].y)
-            .attr('stroke', d => d.color)
-            .attr('stroke-width', '2');
 
         // Make a theme color map and fill it out with themes and distinct colors
 
-        vis.circleData = [];
 
         console.log(vis.data);
         console.log(Object.values(vis.data)[0]);
+
+
+
+
+
+
+
+
+
+        vis.updateVis();
+
+
+
+
+    }
+
+    updateVis() {
+        // Update visualization if needed
+        let vis = this;
+        vis.circleData = [];
+
+
 
         Object.keys(vis.data).forEach(d => {
             // Generate random coordinates within the hexagon
             let randomX, randomY;
             do {
-                randomX = Math.random() * (2 * hexRadius) - hexRadius + vis.config.containerWidth / 2;
-                randomY = Math.random() * (2 * hexRadius) - hexRadius + vis.config.containerHeight / 2;
-            } while (!pointInHexagon(randomX, randomY, hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, hexRadius)));
+                randomX = Math.random() * (2 * vis.hexRadius) - vis.hexRadius + vis.config.containerWidth / 2;
+                randomY = Math.random() * (2 * vis.hexRadius) - vis.hexRadius + vis.config.containerHeight / 2;
+            } while (!vis.pointInHexagon(randomX, randomY, vis.hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, vis.hexRadius)));
             vis.circleData.push({ x: randomX, y: randomY, setNum: d });
         });
-
-        function pointInHexagon(x, y, hexagonPoints) {
-            let isInside = false;
-            for (let i = 0, j = hexagonPoints.length - 1; i < hexagonPoints.length; j = i++) {
-                const xi = hexagonPoints[i].x, yi = hexagonPoints[i].y;
-                const xj = hexagonPoints[j].x, yj = hexagonPoints[j].y;
-
-                const intersect = ((yi > y) !== (yj > y)) &&
-                    (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-                if (intersect) isInside = !isInside;
-            }
-            return isInside;
-        }
-
-        // ! POINTS CHOSEN FOR STATIC VISUALIZATION FOR M3 (next 4 lines)
-        const hoverPoint = '30277-1';
-        const selectedPoint = '42089-1';
-        // const attachedPoints = ['75094-1', '561508-1', '41135-1', '75046-1', '75033-1']
-        // const staticPoints = [hoverPoint, selectedPoint, ...attachedPoints];
-        let staticPoints = []
-
-
 
         vis.svg.selectAll('.circle')
             .data(vis.circleData)
@@ -126,9 +129,8 @@ class Hexagon {
             .attr('cx', d => d.x)
             .attr('cy', d => d.y)
             .attr('r', 3) // Set your desired radius
-            .attr('fill', d => colorMap[vis.data[d.setNum].theme_name] ? colorMap[vis.data[d.setNum].theme_name] : 'white')
+            .attr('fill', d => vis.colorMap[vis.data[d.setNum].theme_name] ? vis.colorMap[vis.data[d.setNum].theme_name] : 'white')
             .attr('stroke', 'black')
-            .attr('stroke-dasharray', d => d.setNum === '30277-1' ? '2, 1' : 'none') // ! STATIC VISUALIZATION FOR M3
             .attr('stroke-width', '0') // ! STATIC VISUALIZATION FOR M3
             .on('click', function (event, d) {
                 // Toggle presence of setNum in cardData
@@ -144,8 +146,10 @@ class Hexagon {
 
                     vis.hoveredSet = null;
                 }
+                vis.renderVis();
+
                 vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
-                vis.updateVis();
+                // vis.updateVis();
 
 
             })
@@ -155,7 +159,8 @@ class Hexagon {
                     d3.select(this).raise();
 
                     vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
-                    vis.updateVis();
+                    // vis.updateVis();
+                    vis.renderVis();
 
 
 
@@ -165,20 +170,11 @@ class Hexagon {
                 vis.hoveredSet = null;
 
                 vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
-                vis.updateVis();
+                // vis.updateVis();
+                vis.renderVis();
 
             });
 
-
-
-
-
-
-    }
-
-    updateVis() {
-        // Update visualization if needed
-        let vis = this;
 
 
 
@@ -189,23 +185,39 @@ class Hexagon {
         // // ! LINES FOR STATIC VISUALIZATION FOR M3 (next 11 lines)
 
         // vis.svg.selectAll('.line').remove();
-        const selectedPointX = this.clickedSet ? vis.circleData.find(d => d.setNum === vis.clickedSet).x : null;
-        const selectedPointY = this.clickedSet ? vis.circleData.find(d => d.setNum === vis.clickedSet).y : null;
-        const points = []
-        vis.attachedPoints.forEach(pointId => {
-            console.log("Point ID", pointId)
 
-            const point = vis.circleData.find(d => vis.data[d.setNum].set_num === pointId);
-            points.push(point)
-
-        })
-        console.log("Points", points)
+        console.log("Points", vis.points)
         // vis.svg.selectAll('.connector').remove();
 
 
         // Bind data
+
+
+
+
+
+
+        vis.renderVis();
+    }
+
+    renderVis() {
+        // Render visualization if needed
+        let vis = this;
+        vis.points = [];
+
+        vis.selectedPointX = this.clickedSet ? vis.circleData.find(d => d.setNum === vis.clickedSet).x : null;
+        vis.selectedPointY = this.clickedSet ? vis.circleData.find(d => d.setNum === vis.clickedSet).y : null;
+
+        vis.attachedPoints.forEach(pointId => {
+            console.log("Point ID", pointId)
+
+            const point = vis.circleData.find(d => vis.data[d.setNum].set_num === pointId);
+            vis.points.push(point)
+
+        })
+
         let lines = vis.svg.selectAll('.connector')
-            .data(points, d => d.setNum); // Use a unique identifier for each data point
+            .data(vis.points, d => d.setNum); // Use a unique identifier for each data point
 
         // Enter new lines
         let newLines = lines.enter()
@@ -214,8 +226,8 @@ class Hexagon {
 
         // Update existing lines and add attributes to new lines
         lines.merge(newLines)
-            .attr('x1', selectedPointX)
-            .attr('y1', selectedPointY)
+            .attr('x1', vis.selectedPointX)
+            .attr('y1', vis.selectedPointY)
             .attr('x2', d => d.x)
             .attr('y2', d => d.y)
             .attr('stroke', 'black')
@@ -224,7 +236,16 @@ class Hexagon {
 
         // Exit and remove unused lines
         lines.exit().remove();
-
+        vis.svg.selectAll('.edge')
+            .data(vis.hexagonData)
+            .enter().append('line')
+            .attr('class', 'edge')
+            .attr('x1', (d, i) => vis.hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, vis.hexRadius)[i].x)
+            .attr('y1', (d, i) => vis.hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, vis.hexRadius)[i].y)
+            .attr('x2', (d, i, nodes) => vis.hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, vis.hexRadius)[(i + 1) % nodes.length].x)
+            .attr('y2', (d, i, nodes) => vis.hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, vis.hexRadius)[(i + 1) % nodes.length].y)
+            .attr('stroke', d => d.color)
+            .attr('stroke-width', '2');
 
         vis.svg.selectAll('.circle')
             .attr('opacity', function (d) {
@@ -235,6 +256,10 @@ class Hexagon {
                 }
             })
             .attr('stroke-width', function (d) {
+
+                console.log(" stroke width ", vis.data[d.setNum])
+                console.log(d)
+                console.log(vis.data)
                 if (vis.clickedSet === d.setNum || vis.attachedPoints.includes(vis.data[d.setNum].set_num)) {
                     return 1.5;
                 } else return 0
@@ -244,14 +269,6 @@ class Hexagon {
                     return '2, 1';
                 } else return 'none'
             });
-
-
-        vis.renderVis();
-    }
-
-    renderVis() {
-        // Render visualization if needed
-
 
 
     }
