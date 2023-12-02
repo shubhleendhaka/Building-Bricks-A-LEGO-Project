@@ -125,7 +125,6 @@ d3.csv("data/hexagon_data.csv").then((data) => {
 
     d3.select("#search-input").on("keypress", (event) => {
         if (event.key === "Enter") {
-            // TODO: Dispatch search event
 
             let point = networkGraph.data.find(d => d.set_name === event.target.value);
 
@@ -139,8 +138,15 @@ d3.csv("data/hexagon_data.csv").then((data) => {
     });
 
     // Pick Random Listener
-    d3.select("#pick-random").on("click", () => {
+    d3.select("#pick-random").on("click", (event) => {
         // TODO: Dispatch random selection event
+
+        let randomPoint = networkGraph.data[Math.floor(Math.random() * networkGraph.data.length)];
+        networkGraph.clickedSet = randomPoint;
+        // clear search input
+        d3.select("#search-input").node().value = "";
+        networkGraph.updateVis();
+        dispatcher.call('cardData', event, [randomPoint, null]);
         console.log("Pick random button clicked!");
     });
 
