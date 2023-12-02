@@ -44,9 +44,6 @@ d3.csv("data/hexagon_data.csv").then((data) => {
 
     console.log("Themes are ", themes);
     const dispatcher = d3.dispatch(
-        "searchPoint",
-        "randomPoint",
-        "selectedPoint",
         "cardData",
         "selectedColors"
     );
@@ -82,27 +79,18 @@ d3.csv("data/hexagon_data.csv").then((data) => {
         cards.updateVis();
 
         let activeColors = new Set();
-
         for (let i = 0; i < cardData.length; i++) {
-
             if (cardData[i] !== null) {
-
                 const currentCard = cardData[i];
                 for (let column of rgbColumns) {
-
                     if (currentCard[column]) {
                         activeColors.add(column);
-
                     }
                 }
 
             }
         }
-
-
-        console.log("Active Colors", activeColors);
         colorChart.activeColors = activeColors;
-        // colorChart.selectedColors = new Set();
         colorChart.updateChart(colorData);
 
 
@@ -112,12 +100,8 @@ d3.csv("data/hexagon_data.csv").then((data) => {
 
 
     dispatcher.on("selectedColors", (selectedColors) => {
-
         colorChart.selectedColors = selectedColors;
-        console.log("Selected Colors are", selectedColors);
-
         colorChart.activeColors = new Set();
-
         colorChart.updateChart(colorData);
 
         let filteredData = data.filter(point => {
@@ -130,59 +114,27 @@ d3.csv("data/hexagon_data.csv").then((data) => {
             return true;
         });
 
-        console.log("filtered data length", filteredData.length)
-        console.log("filtered data", filteredData)
-
         networkGraph.data = filteredData;
-        // networkGraph.clickedSet = null;
-        // networkGraph.attachedPoints = [];
+        networkGraph.clickedSet = null;
+        networkGraph.attachedPoints = [];
+        networkGraph.lineData = [];
         networkGraph.updateVis();
 
 
     });
 
-
-    // Instantiate the ColorChart with the transformed color data
-
-
-
-});
-
-
-d3.csv("data/lego_data.csv").then((data) => {
-    // Convert columns to numerical values
-    data.forEach((d) => {
-        d.set_year = +d.set_year;
-        d.theme_id = +d.theme_id;
-        d.set_num_parts = +d.set_num_parts;
-        d.color_id = +d.color_id;
-        d.rgb = d.rgb; // leaving rgb as string
-    });
-
-    const dispatcher = d3.dispatch(
-        "searchPoint",
-        "randomPoint",
-        "selectedPoint",
-        "cardData"
-    );
-
-    const filteredData = {};
-
-    data.forEach((d) => {
-        const setNum = d.set_num;
-        if (!filteredData[setNum]) {
-            filteredData[setNum] = {
-                theme_name: d.theme_name,
-            };
-        }
-    });
-
-    // Search Input Listener
     d3.select("#search-input").on("keypress", (event) => {
         if (event.key === "Enter") {
             // TODO: Dispatch search event
-            console.log(`Search input entered for: ${event.target.value}`);
-            event.target.value = "";
+
+            let point = networkGraph.data.find(d => d.set_name === event.target.value);
+
+            if (point !== undefined) {
+                networkGraph.clickedSet = point;
+                networkGraph.updateVis();
+                dispatcher.call('cardData', event, [point, null]);
+            }
+
         }
     });
 
@@ -193,30 +145,69 @@ d3.csv("data/lego_data.csv").then((data) => {
     });
 
 
+    // Instantiate the ColorChart with the transformed color data
 
-
-
-    const heatMap = new HeatMap(
-        {
-            parentElement: d3.select("#heat-map-container"),
-        },
-        data
-    );
-
-
-    // Instantiate Cards
-    const cards = new Cards(
-        {
-            parentElement: d3.select("#cards-container"),
-        },
-        dispatcher,
-        data
-    );
-    dispatcher.on("cardData", (cardData) => {
-        console.log("Card Data", cardData);
-        cards.cardData = cardData;
-        cards.updateVis();
-    });
 
 
 });
+
+
+// d3.csv("data/lego_data.csv").then((data) => {
+//     // Convert columns to numerical values
+//     data.forEach((d) => {
+//         d.set_year = +d.set_year;
+//         d.theme_id = +d.theme_id;
+//         d.set_num_parts = +d.set_num_parts;
+//         d.color_id = +d.color_id;
+//         d.rgb = d.rgb; // leaving rgb as string
+//     });
+
+//     const dispatcher = d3.dispatch(
+//         "searchPoint",
+//         "randomPoint",
+//         "selectedPoint",
+//         "cardData"
+//     );
+
+//     const filteredData = {};
+
+//     data.forEach((d) => {
+//         const setNum = d.set_num;
+//         if (!filteredData[setNum]) {
+//             filteredData[setNum] = {
+//                 theme_name: d.theme_name,
+//             };
+//         }
+//     });
+
+//     // Search Input Listener
+
+
+
+
+
+
+//     const heatMap = new HeatMap(
+//         {
+//             parentElement: d3.select("#heat-map-container"),
+//         },
+//         data
+//     );
+
+
+//     // Instantiate Cards
+//     const cards = new Cards(
+//         {
+//             parentElement: d3.select("#cards-container"),
+//         },
+//         dispatcher,
+//         data
+//     );
+//     dispatcher.on("cardData", (cardData) => {
+//         console.log("Card Data", cardData);
+//         cards.cardData = cardData;
+//         cards.updateVis();
+//     });
+
+
+// });
