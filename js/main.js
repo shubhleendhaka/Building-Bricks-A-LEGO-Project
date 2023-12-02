@@ -74,7 +74,6 @@ d3.csv("data/hexagon_data.csv").then((data) => {
     );
 
     dispatcher.on("cardData", (cardData) => {
-        console.log("Card Data", cardData);
         cards.cardData = cardData;
         cards.updateVis();
 
@@ -115,10 +114,7 @@ d3.csv("data/hexagon_data.csv").then((data) => {
         });
 
         networkGraph.data = filteredData;
-        networkGraph.clickedSet = null;
-        networkGraph.attachedPoints = [];
-        networkGraph.lineData = [];
-        networkGraph.updateVis();
+        networkGraph.updateData(filteredData);
 
 
     });
