@@ -61,7 +61,6 @@ class ColorChart {
                 return `translate(${x},${y})`;
             })
             .on('click', function (event, d) {
-                console.log("Clicked on ", chart.selectedColors);
                 chart.activeColors = new Set();
 
                 if (chart.selectedColors.has(d)) {
@@ -75,12 +74,9 @@ class ColorChart {
 
 
 
-                console.log("Clicked on ", chart.selectedColors);
             });
 
-        console.log("Unique Colors")
-        console.log(chart.uniqueColors)
-        console.log(chart.activeColors)
+
 
         // Append the main square (lego base) to the group
         legoGroup.append('rect')

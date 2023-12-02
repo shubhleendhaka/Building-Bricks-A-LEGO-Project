@@ -17,7 +17,6 @@ class Cards {
         // Wait for the DOM to fully load before initializing the visualization
         this.cardData = [];
         this.filteredCards = [];
-        console.log(this.config.parentElement);
         this.initVis();
 
     }
@@ -28,8 +27,7 @@ class Cards {
     }
     updateVis() {
         const vis = this;
-        console.log("Updating Cards");
-        console.log(vis.cardData)
+
 
         //     FROM VIS.data only get items where the set_num is in vis.cardData
 
@@ -46,7 +44,6 @@ class Cards {
         let cardsHTML = '';
         for (let i = 0; i < vis.cardData.length; i++) {
             if (vis.cardData[i] !== null) {
-                console.log("Current Card", vis.data[vis.cardData[i]])
 
                 let currentCard = vis.cardData[i];
 
