@@ -90,9 +90,49 @@ class Hexagon {
             .attr('stroke', d => d.color)
             .attr('stroke-width', '2');
 
+        // Calculate hexagon edge midpoints
+        vis.hexagonMidpoints = vis.calculateHexagonMidpoints();
+
+        // Initialize force simulation
+        vis.forceSimulation = d3.forceSimulation()
+            .force("charge", d3.forceManyBody().strength(-10))
+            // ! Do we need force center to help it remain within the hexagon?
+            // .force("center", d3.forceCenter(vis.config.containerWidth / 2, vis.config.containerHeight / 2))
+            .force("collide", d3.forceCollide(3))
+            .force("themeForce", vis.themeForce());
 
         vis.updateData(vis.data);
         // vis.updateLines();
+    }
+
+    calculateHexagonMidpoints() {
+        let vis = this;
+        const center = { x: vis.config.containerWidth / 2, y: vis.config.containerHeight / 2 };
+        const points = vis.hexagonPoints(center.x, center.y, vis.hexRadius);
+        const midpoints = [];
+    
+        for (let i = 0; i < points.length; i++) {
+            const nextIndex = (i + 1) % points.length;
+            midpoints.push({
+                x: (points[i].x + points[nextIndex].x + center.x) / 3,
+                y: (points[i].y + points[nextIndex].y + center.y) / 3,
+                theme: vis.hexagonData[i].label // Assuming each edge corresponds to a theme
+            });
+        }
+        return midpoints;
+    }
+
+    themeForce() {
+        let vis = this;
+        return (alpha) => {
+            vis.circleData.forEach(d => {
+                const target = vis.hexagonMidpoints.find(p => p.theme === d.data.theme_name);
+                if (target) {
+                    d.x += (target.x - d.x) * alpha;
+                    d.y += (target.y - d.y) * alpha;
+                }
+            });
+        };
     }
 
     updateData(data) {
@@ -103,15 +143,28 @@ class Hexagon {
         vis.attachedPoints = [];
         vis.lineData = [];
 
+        console.log("FLAG 1");
+        console.log(vis.circleData);
+
+        let centerX = vis.config.containerWidth / 2;
+        let centerY = vis.config.containerHeight / 2;
+
         vis.data.forEach(d => {
             // Generate random coordinates within the hexagon
-            let randomX, randomY;
-            do {
-                randomX = Math.random() * (2 * vis.hexRadius) - vis.hexRadius + vis.config.containerWidth / 2;
-                randomY = Math.random() * (2 * vis.hexRadius) - vis.hexRadius + vis.config.containerHeight / 2;
-            } while (!vis.pointInHexagon(randomX, randomY, vis.hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, vis.hexRadius)));
-            vis.circleData.push({ x: randomX, y: randomY, setNum: d.set_num, data: d });
+            // let randomX, randomY;
+            // do {
+            //     randomX = Math.random() * (2 * vis.hexRadius) - vis.hexRadius + vis.config.containerWidth / 2;
+            //     randomY = Math.random() * (2 * vis.hexRadius) - vis.hexRadius + vis.config.containerHeight / 2;
+            // } while (!vis.pointInHexagon(randomX, randomY, vis.hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, vis.hexRadius)));
+            // vis.circleData.push({ x: randomX, y: randomY, setNum: d.set_num, data: d });
+            vis.circleData.push({ x: centerX, y: centerY, setNum: d.set_num, data: d})
         });
+
+        console.log(vis.data);
+
+        console.log("FLAG 2");
+        console.log(vis.circleData);
+
         vis.updateVis();
 
     }
@@ -123,7 +176,8 @@ class Hexagon {
         let vis = this;
         console.log("New data is ", vis.data.length, " items long ");
 
-
+        vis.forceSimulation.nodes(vis.circleData).on("tick", () => this.renderVis());
+        vis.forceSimulation.alpha(1).restart();
 
         vis.updateLines();
         vis.updateStyle();
@@ -150,10 +204,6 @@ class Hexagon {
                     return '2, 1';
                 } else return 'none'
             });
-
-
-
-
     }
 
     updateLines() {
@@ -214,13 +264,21 @@ class Hexagon {
         // Render visualization if needed
         console.log("do be rendering")
         let vis = this;
+
         let circles = vis.svg.selectAll('.circle')
             .data(vis.circleData);
+
+        // console.log("PAIN");
+        // console.log(vis.circleData);
 
         circles.enter().append('circle')
             .attr('class', 'circle')
             .attr('id', d => d.setNum)
-            .attr('cx', d => d.x)
+            .attr('cx', d => {
+                console.log("AAAA");
+                console.log(d);
+                return d.x;
+            })
             .attr('cy', d => d.y)
             .attr('r', 3) // Set your desired radius
             .attr('fill', d => vis.colorMap[d.data.theme_name] ? vis.colorMap[d.data.theme_name] : 'white')
@@ -263,6 +321,10 @@ class Hexagon {
 
 
             })
+
+        circles
+            .attr('cx', d => d.x)
+            .attr('cy', d => d.y);
 
 
         circles.exit().remove();

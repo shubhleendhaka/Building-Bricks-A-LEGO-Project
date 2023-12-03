@@ -1,3 +1,6 @@
+// TODO: REMOVE AFTER TESTING:
+// d3.csv("data/test_data.csv").then((data) => {
+
 d3.csv("data/hexagon_data.csv").then((data) => {
     // make a set of all the themes that are in the data
 
