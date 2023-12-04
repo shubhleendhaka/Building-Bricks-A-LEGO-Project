@@ -4,6 +4,7 @@ class HeatMap {
             parentElement: _config.parentElement,
             containerWidth: 600,
             containerHeight: 600,
+            legendHeight: 20,
             margin: {
                 top: 30,
                 right: 30,
@@ -12,6 +13,8 @@ class HeatMap {
             }
         };
         this.data = _data;
+        this.colorScale = d3.scaleLinear()
+            .range(["#FFEAC1", "#C32020"])
         this.initVis();
     }
 
@@ -20,14 +23,12 @@ class HeatMap {
 
         // Set up SVG container
         vis.config.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
-        vis.config.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
+        vis.config.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom*2 - vis.config.legendHeight;
 
-        vis.years = [1980, 1990, 2000, 2010, 2020];
-        // vis.step = 1000;
-        // let ySize = new Set(vis.data.map((d) => d.set_num_parts));
-        // let ymax = Math.floor(Math.max(...ySize)/vis.step);
-        // let setSizes = [...Array(ymax).keys()].map(d => d * vis.step).reverse();
-        vis.setSizes = [0, 100, 200, 300, 400, 500].reverse();
+        vis.year_skip = 10;
+        vis.size_skip = 50;
+        vis.years = d3.range(1960, 2030, vis.year_skip);
+        vis.setSizes = d3.range(0, 550, vis.size_skip).reverse();
         // Scales
         vis.xScale = d3.scaleBand()
             .domain(vis.years)
@@ -72,8 +73,8 @@ class HeatMap {
 
         vis.data.forEach((d) => {
             const setNum = d.set_num;
-            const year = Math.floor(d.set_year/10)*10;
-            const size = Math.floor(d.set_num_parts/100)*100;
+            const year = Math.floor(d.set_year/vis.year_skip)*vis.year_skip;
+            const size = Math.floor(d.set_num_parts/vis.size_skip)*vis.size_skip;
             if (!vis.filteredData.has(setNum)) {
                 vis.filteredData.set(setNum, year+":"+size);
             }
@@ -94,6 +95,9 @@ class HeatMap {
             if (vis.blockData.has(year+":"+size)) {
                 vis.blockData.set(year+":"+size, vis.blockData.get(year+":"+size) + 1);
             } else if (size > maxSize) {
+                if (!vis.blockData.has(year+":"+maxSize)) {
+                    vis.blockData.set(year+":"+maxSize, 0);
+                }
                 vis.blockData.set(year+":"+maxSize, vis.blockData.get(year+":"+maxSize) + 1);
             }
         });
@@ -107,11 +111,9 @@ class HeatMap {
 
         vis.yAxis = d3.axisLeft(vis.yScale).tickValues(vis.setSizes);
 
-        const blockRange = vis.blockData.map(d => d.value);
+        vis.blockRange = vis.blockData.map(d => d.value);
         // Heat map blocks colour range
-        vis.colorScale = d3.scaleLinear()
-            .range(["#FFEAC1", "#C32020"])
-            .domain([Math.min(...blockRange), Math.max(...blockRange)])
+        vis.colorScale.domain([Math.min(...vis.blockRange), Math.max(...vis.blockRange)])
 
         vis.renderVis();
     }
@@ -130,5 +132,44 @@ class HeatMap {
 
         vis.xAxisGroup.call(vis.xAxis);
         vis.yAxisGroup.call(vis.yAxis);
+
+        vis.renderLegend();
+    }
+
+    renderLegend() {
+        let vis = this;
+        const legend = vis.svg.append("g");
+
+        legend.append("defs")
+            .append("linearGradient")
+            .attr('id', 'linear-gradient')
+            .selectAll('stop')
+            .data(vis.colorScale.ticks(10).map((t, i, n) => ({ offset: `${100*i/n.length}%`, color: vis.colorScale(t)})))
+            .enter()
+            .append("stop")
+            .attr("offset", d => d.offset)
+            .attr('stop-color', d => d.color);
+
+        vis.chart.append("rect")
+            .attr('width', vis.config.width)
+            .attr('height', vis.config.legendHeight)
+            .attr("transform", `translate(0, ${vis.config.height + vis.config.legendHeight})`)
+            .attr('fill', "url(#linear-gradient)");
+
+        let axisScale = d3.scaleLinear()
+            .domain(vis.colorScale.domain())
+            .range([0, vis.config.width]);
+
+        let xAxis = d3.axisBottom(axisScale).ticks(4);
+
+        let xAxisGroup = vis.chartArea.append('g')
+            .attr('class', 'axis x-axis')
+            .attr('transform', `translate(${0},${vis.config.height + vis.config.legendHeight*2})`)
+            .call(xAxis);
+
+        xAxisGroup.append('text')
+            .attr('x', vis.config.width / 2)
+            .attr('y', 25)
+            .text('Number of sets');
     }
 }
