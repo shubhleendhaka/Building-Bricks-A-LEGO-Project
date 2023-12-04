@@ -33,18 +33,18 @@ class Hexagon {
         return points;
     }
 
-    // pointInHexagon(x, y, hexagonPoints) {
-    //     let isInside = false;
-    //     for (let i = 0, j = hexagonPoints.length - 1; i < hexagonPoints.length; j = i++) {
-    //         const xi = hexagonPoints[i].x, yi = hexagonPoints[i].y;
-    //         const xj = hexagonPoints[j].x, yj = hexagonPoints[j].y;
+    pointInHexagon(x, y, hexagonPoints) {
+        let isInside = false;
+        for (let i = 0, j = hexagonPoints.length - 1; i < hexagonPoints.length; j = i++) {
+            const xi = hexagonPoints[i].x, yi = hexagonPoints[i].y;
+            const xj = hexagonPoints[j].x, yj = hexagonPoints[j].y;
 
-    //         const intersect = ((yi > y) !== (yj > y)) &&
-    //             (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-    //         if (intersect) isInside = !isInside;
-    //     }
-    //     return isInside;
-    // }
+            const intersect = ((yi > y) !== (yj > y)) &&
+                (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+            if (intersect) isInside = !isInside;
+        }
+        return isInside;
+    }
 
     initVis() {
         let vis = this;
@@ -97,11 +97,12 @@ class Hexagon {
 
         // Initialize force simulation
         vis.forceSimulation = d3.forceSimulation()
-            .force("charge", d3.forceManyBody().strength(-10))
+            .force("charge", d3.forceManyBody().strength(-50).distanceMax(vis.hexRadius / 2.5))
             // ! Do we need force center to help it remain within the hexagon?
-            .force("center", d3.forceCenter(vis.centerX, vis.centerY))
-            .force("collide", d3.forceCollide(3))
-            .force("themeForce", vis.themeForce());
+            .force("center", d3.forceCenter(vis.centerX, vis.centerY).strength(0.5))
+            .force("collide", d3.forceCollide(3).strength(0.7))
+            .force("themeForce", vis.themeForce())
+            .alphaDecay(0.05);
 
         vis.updateData(vis.data);
         // vis.updateLines();
@@ -136,11 +137,36 @@ class Hexagon {
             vis.circleData.forEach(d => {
                 const target = vis.hexagonMidpoints.find(p => p.theme === d.data.theme_name);
                 if (target) {
-                    d.x += (target.x - d.x) * alpha;
-                    d.y += (target.y - d.y) * alpha;
+                    // d.x += (target.x - d.x) * alpha;
+                    // d.y += (target.y - d.y) * alpha;
+
+                    // Calculate distance to the target
+                    const dx = target.x - d.x;
+                    const dy = target.y - d.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    // Set a threshold distance at which the force is reduced
+                    const threshold = vis.hexRadius / 4; // Adjust as necessary
+
+                    // Scale the force based on distance
+                    const scale = distance < threshold ? (distance / threshold) : 1;
+                    d.x += dx * alpha * scale;
+                    d.y += dy * alpha * scale;
                 }
             });
         };
+    }
+
+    forceInsideHexagon(alpha) {
+        let vis = this;
+        vis.circleData.forEach(node => {
+            if (!vis.pointInHexagon(node.x, node.y, vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius))) {
+                // If the node is outside, adjust its position
+                // For simplicity, let's move the node towards the center
+                node.x += (vis.centerX - node.x) * alpha * 1.5;
+                node.y += (vis.centerY - node.y) * alpha * 1.5;
+            }
+        });
     }
 
     updateData(data) {
@@ -150,9 +176,6 @@ class Hexagon {
         vis.clickedSet = null;
         vis.attachedPoints = [];
         vis.lineData = [];
-
-        console.log("FLAG 1");
-        console.log(vis.circleData);
 
         let centerX = vis.config.containerWidth / 2;
         let centerY = vis.config.containerHeight / 2;
@@ -184,7 +207,10 @@ class Hexagon {
         let vis = this;
         console.log("New data is ", vis.data.length, " items long ");
 
-        vis.forceSimulation.nodes(vis.circleData).on("tick", () => this.renderVis());
+        vis.forceSimulation
+            .nodes(vis.circleData)
+            .force("insideHexagon", alpha => vis.forceInsideHexagon(alpha))
+            .on("tick", () => this.renderVis());
         vis.forceSimulation.alpha(1).restart();
 
         vis.updateLines();
