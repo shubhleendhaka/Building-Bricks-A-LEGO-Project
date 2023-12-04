@@ -22,8 +22,8 @@ class HeatMap {
         let vis = this;
 
         // Set up SVG container
-        vis.config.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
-        vis.config.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom*2 - vis.config.legendHeight;
+        vis.config.width = vis.config.containerWidth - vis.config.margin.left*2 - vis.config.margin.right;
+        vis.config.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom*3 - vis.config.legendHeight;
 
         vis.year_skip = 10;
         vis.size_skip = 50;
@@ -40,16 +40,25 @@ class HeatMap {
             .range([0, vis.config.height])
             .padding(0.01);
 
-        vis.xAxis = d3.axisBottom(vis.xScale).tickValues(vis.years);
+        vis.xAxis = d3.axisBottom(vis.xScale).tickValues(vis.years).tickFormat(d => d + "-" + (d + vis.year_skip - 1));
 
-        vis.yAxis = d3.axisLeft(vis.yScale).tickValues(vis.setSizes);
+        vis.yAxis = d3.axisLeft(vis.yScale).tickValues(vis.setSizes).tickFormat(d => (d + "-" + (d + vis.size_skip - 1)));
         
         vis.svg = vis.config.parentElement.append('svg')
             .attr('width', vis.config.containerWidth)
             .attr('height', vis.config.containerHeight);
+        
+        vis.svg.append("text")
+            .style('fill', 'black')
+            .style('font-size', '18px')
+            .attr('text-anchor', 'middle')
+            .attr('x', vis.config.containerWidth / 2 + vis.config.margin.left)
+            .attr('y', 20)
+            .attr('fill-opacity', 1)
+            .text("Sets by Number of Pieces and Year");
 
         vis.chartArea = vis.svg.append('g')
-            .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
+            .attr('transform', `translate(${vis.config.margin.left*2},${vis.config.margin.top})`);
         
         vis.chart = vis.chartArea.append('g')
 
@@ -58,10 +67,31 @@ class HeatMap {
             .attr('class', 'axis x-axis')
             .attr('transform', `translate(${0},${vis.config.height})`)
             .call(vis.xAxis);
+        
+        vis.xAxisGroup.append('text')
+            .attr('class', 'axis text')
+            .style('fill', 'black')
+            .style('font-size', '14px')
+            .attr('text-anchor', 'middle')
+            .attr('x', vis.config.width / 2)
+            .attr('y', 28)
+            .attr('fill-opacity', 1)
+            .text("Year");
       
         vis.yAxisGroup = vis.chartArea.append('g')
             .attr('class', 'axis y-axis')
             .call(vis.yAxis);
+
+        vis.svg.append('text')
+            .attr('class', 'axis text')
+            .style('fill', 'black')
+            .style('font-size', '14px')
+            .attr('text-anchor', 'middle')
+            .attr('x', -vis.config.height / 2 - vis.config.margin.top)
+            .attr('y', vis.config.margin.left + 10)
+            .attr("transform", "rotate(-90)")
+            .attr('fill-opacity', 1)
+            .text("Number of Pieces in Set");
 
         vis.updateVis();
     }
@@ -109,7 +139,7 @@ class HeatMap {
             .range([0, vis.config.height])
             .padding(0.01);
 
-        vis.yAxis = d3.axisLeft(vis.yScale).tickValues(vis.setSizes);
+        vis.yAxis = d3.axisLeft(vis.yScale).tickValues(vis.setSizes).tickFormat(d => (d + "-" + (d + vis.size_skip - 1)));
 
         vis.blockRange = vis.blockData.map(d => d.value);
         // Heat map blocks colour range
@@ -131,7 +161,12 @@ class HeatMap {
                 .style('fill', d => { return vis.colorScale(d.value); })
 
         vis.xAxisGroup.call(vis.xAxis);
-        vis.yAxisGroup.call(vis.yAxis);
+        vis.yAxisGroup.call(vis.yAxis)
+            .selectAll("text")  
+                .style("text-anchor", "end")
+                .attr('x', 14)
+                .attr('y', -10)
+                .attr("transform", "rotate(-90)" );
 
         vis.renderLegend();
     }
@@ -153,23 +188,27 @@ class HeatMap {
         vis.chart.append("rect")
             .attr('width', vis.config.width)
             .attr('height', vis.config.legendHeight)
-            .attr("transform", `translate(0, ${vis.config.height + vis.config.legendHeight})`)
+            .attr("transform", `translate(0, ${vis.config.height + vis.config.legendHeight + vis.config.margin.bottom})`)
             .attr('fill', "url(#linear-gradient)");
 
         let axisScale = d3.scaleLinear()
             .domain(vis.colorScale.domain())
             .range([0, vis.config.width]);
 
-        let xAxis = d3.axisBottom(axisScale).ticks(4);
+        let xAxis = d3.axisBottom(axisScale).tickValues([Math.min(...vis.blockRange), Math.floor(Math.max(...vis.blockRange)/2), Math.max(...vis.blockRange)]);
 
         let xAxisGroup = vis.chartArea.append('g')
             .attr('class', 'axis x-axis')
-            .attr('transform', `translate(${0},${vis.config.height + vis.config.legendHeight*2})`)
+            .attr('transform', `translate(${0},${vis.config.height + vis.config.legendHeight*2 + vis.config.margin.bottom})`)
             .call(xAxis);
 
         xAxisGroup.append('text')
+            .style('fill', 'black')
+            .style('font-size', '14px')
+            .attr('text-anchor', 'middle')
             .attr('x', vis.config.width / 2)
-            .attr('y', 25)
-            .text('Number of sets');
+            .attr('y', -5)
+            .attr('fill-opacity', 1)
+            .text("Number of sets");
     }
 }
