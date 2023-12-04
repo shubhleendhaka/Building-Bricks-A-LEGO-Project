@@ -123,8 +123,9 @@ class Hexagon {
             };
             // Increase the weight of the center in the averaging
             midpoints.push({
-                x: (edgeMidpoint.x + 2 * vis.centerX) / 3, // Two parts center, one part edge midpoint
-                y: (edgeMidpoint.y + 2 * vis.centerY) / 3, // Two parts center, one part edge midpoint
+                // 2-to-1 ratio of center-to-edge midpoint for both dimensions
+                x: (edgeMidpoint.x + 2 * vis.centerX) / 3, 
+                y: (edgeMidpoint.y + 2 * vis.centerY) / 3, 
                 theme: vis.hexagonData[i].label
             });
         }
@@ -146,7 +147,7 @@ class Hexagon {
                     const distance = Math.sqrt(dx * dx + dy * dy);
 
                     // Set a threshold distance at which the force is reduced
-                    const threshold = vis.hexRadius / 4; // Adjust as necessary
+                    const threshold = vis.hexRadius / 4;
 
                     // Scale the force based on distance
                     const scale = distance < threshold ? (distance / threshold) : 1;
@@ -180,6 +181,7 @@ class Hexagon {
         let centerX = vis.config.containerWidth / 2;
         let centerY = vis.config.containerHeight / 2;
 
+        // Push initial data for each point -> Each point should initialize in center of hexagon before forces move them around
         vis.data.forEach(d => {
             // Generate random coordinates within the hexagon
             // let randomX, randomY;
@@ -190,11 +192,6 @@ class Hexagon {
             // vis.circleData.push({ x: randomX, y: randomY, setNum: d.set_num, data: d });
             vis.circleData.push({ x: centerX, y: centerY, setNum: d.set_num, data: d})
         });
-
-        console.log(vis.data);
-
-        console.log("FLAG 2");
-        console.log(vis.circleData);
 
         vis.updateVis();
 
@@ -299,15 +296,15 @@ class Hexagon {
         console.log("do be rendering")
         let vis = this;
 
-        // TODO: Testing to find middle point
-        vis.svg.selectAll('.midpoint')
-        .data([{}])
-        .enter().append('circle')
-        .attr('class', 'midpoint')
-        .attr('cx', (d) => vis.centerX)
-        .attr('cy', (d) => vis.centerY)
-        .attr('r', 5)
-        .attr('fill', '#39FF14');
+        // // TODO: Testing to find middle point
+        // vis.svg.selectAll('.midpoint')
+        // .data([{}])
+        // .enter().append('circle')
+        // .attr('class', 'midpoint')
+        // .attr('cx', (d) => vis.centerX)
+        // .attr('cy', (d) => vis.centerY)
+        // .attr('r', 5)
+        // .attr('fill', '#39FF14');
 
         let circles = vis.svg.selectAll('.circle')
             .data(vis.circleData);
