@@ -6,7 +6,7 @@ class Hexagon {
             containerHeight: 600,
             margin: {
                 top: 0,
-                right: 5,
+                right: 0,
                 bottom: 20,
                 left: 0
             }
@@ -33,18 +33,18 @@ class Hexagon {
         return points;
     }
 
-    pointInHexagon(x, y, hexagonPoints) {
-        let isInside = false;
-        for (let i = 0, j = hexagonPoints.length - 1; i < hexagonPoints.length; j = i++) {
-            const xi = hexagonPoints[i].x, yi = hexagonPoints[i].y;
-            const xj = hexagonPoints[j].x, yj = hexagonPoints[j].y;
+    // pointInHexagon(x, y, hexagonPoints) {
+    //     let isInside = false;
+    //     for (let i = 0, j = hexagonPoints.length - 1; i < hexagonPoints.length; j = i++) {
+    //         const xi = hexagonPoints[i].x, yi = hexagonPoints[i].y;
+    //         const xj = hexagonPoints[j].x, yj = hexagonPoints[j].y;
 
-            const intersect = ((yi > y) !== (yj > y)) &&
-                (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-            if (intersect) isInside = !isInside;
-        }
-        return isInside;
-    }
+    //         const intersect = ((yi > y) !== (yj > y)) &&
+    //             (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+    //         if (intersect) isInside = !isInside;
+    //     }
+    //     return isInside;
+    // }
 
     initVis() {
         let vis = this;
@@ -59,6 +59,8 @@ class Hexagon {
 
         // Hexagon properties
         vis.hexRadius = 300;
+        vis.centerX = vis.config.containerWidth / 2 + vis.config.margin.left;
+        vis.centerY = vis.config.containerHeight / 2 + vis.config.margin.top;
 
         // Hexagon data
         vis.hexagonData = [
@@ -83,21 +85,21 @@ class Hexagon {
             .data(vis.hexagonData)
             .enter().append('line')
             .attr('class', 'edge')
-            .attr('x1', (d, i) => vis.hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, vis.hexRadius)[i].x)
-            .attr('y1', (d, i) => vis.hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, vis.hexRadius)[i].y)
-            .attr('x2', (d, i, nodes) => vis.hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, vis.hexRadius)[(i + 1) % nodes.length].x)
-            .attr('y2', (d, i, nodes) => vis.hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, vis.hexRadius)[(i + 1) % nodes.length].y)
+            .attr('x1', (d, i) => vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].x)
+            .attr('y1', (d, i) => vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].y)
+            .attr('x2', (d, i, nodes) => vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % nodes.length].x)
+            .attr('y2', (d, i, nodes) => vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % nodes.length].y)
             .attr('stroke', d => d.color)
             .attr('stroke-width', '2');
 
-        // Calculate hexagon edge midpoints
+        // Find midpoints of each sector of the hexagon
         vis.hexagonMidpoints = vis.calculateHexagonMidpoints();
 
         // Initialize force simulation
         vis.forceSimulation = d3.forceSimulation()
             .force("charge", d3.forceManyBody().strength(-10))
             // ! Do we need force center to help it remain within the hexagon?
-            // .force("center", d3.forceCenter(vis.config.containerWidth / 2, vis.config.containerHeight / 2))
+            .force("center", d3.forceCenter(vis.centerX, vis.centerY))
             .force("collide", d3.forceCollide(3))
             .force("themeForce", vis.themeForce());
 
@@ -107,16 +109,22 @@ class Hexagon {
 
     calculateHexagonMidpoints() {
         let vis = this;
-        const center = { x: vis.config.containerWidth / 2, y: vis.config.containerHeight / 2 };
-        const points = vis.hexagonPoints(center.x, center.y, vis.hexRadius);
+        // const center = { x: vis.centerX, y: vis.centerY };
+        const points = vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius);
         const midpoints = [];
     
         for (let i = 0; i < points.length; i++) {
             const nextIndex = (i + 1) % points.length;
+            // Calculate the midpoint of each hexagon edge
+            const edgeMidpoint = {
+                x: (points[i].x + points[nextIndex].x) / 2,
+                y: (points[i].y + points[nextIndex].y) / 2
+            };
+            // Increase the weight of the center in the averaging
             midpoints.push({
-                x: (points[i].x + points[nextIndex].x + center.x) / 3,
-                y: (points[i].y + points[nextIndex].y + center.y) / 3,
-                theme: vis.hexagonData[i].label // Assuming each edge corresponds to a theme
+                x: (edgeMidpoint.x + 2 * vis.centerX) / 3, // Two parts center, one part edge midpoint
+                y: (edgeMidpoint.y + 2 * vis.centerY) / 3, // Two parts center, one part edge midpoint
+                theme: vis.hexagonData[i].label
             });
         }
         return midpoints;
@@ -264,6 +272,16 @@ class Hexagon {
         // Render visualization if needed
         console.log("do be rendering")
         let vis = this;
+
+        // TODO: Testing to find middle point
+        vis.svg.selectAll('.midpoint')
+        .data([{}])
+        .enter().append('circle')
+        .attr('class', 'midpoint')
+        .attr('cx', (d) => vis.centerX)
+        .attr('cy', (d) => vis.centerY)
+        .attr('r', 5)
+        .attr('fill', '#39FF14');
 
         let circles = vis.svg.selectAll('.circle')
             .data(vis.circleData);
