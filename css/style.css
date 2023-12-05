@@ -1,3 +1,41 @@
+/* style.css */
+.three-column-layout {
+    display: flex;
+    justify-content: space-between; /* This will space out your columns */
+    align-items: flex-start; /* This aligns items to the top of the container */
+}
+
+#left-column {
+    flex: 1; /* Assigns a flex ratio */
+    order: 1; /* Ensures this column is first */
+    /* Additional styling */
+}
+
+#center-column {
+    flex: 2; /* Takes twice as much space as the other columns */
+    order: 2; /* Ensures this column is second */
+    /* Additional styling */
+}
+
+#right-column {
+    flex: 1; /* Assigns a flex ratio */
+    order: 3; /* Ensures this column is last */
+    /* Additional styling */
+}
+
+.page-header {
+    text-align: left;
+    margin: 0;
+    padding: 20px;
+}
+
+.page-header h1 {
+    margin: 0;
+    padding: 0;
+    /* Add any additional styling you want for your title */
+}
+
+
 /* Hexagon */
 .circle:hover {
     stroke-width: 1;

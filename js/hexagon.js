@@ -6,9 +6,9 @@ class Hexagon {
             containerHeight: 600,
             margin: {
                 top: 0,
-                right: 5,
-                bottom: 20,
-                left: 0
+                right: 10,
+                bottom: 10,
+                left: 10
             }
         };
         this.dispatcher = dispatcher;
