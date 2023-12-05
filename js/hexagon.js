@@ -64,12 +64,12 @@ class Hexagon {
 
         // Hexagon data
         vis.hexagonData = [
-            { color: '#fb8072', label: 'Books' },   // Red
-            { color: '#fdb462', label: 'Key Chain' },   // Orange
-            { color: '#ffe45e', label: 'Friends' },   // Yellow
-            { color: '#8dd3c7', label: 'Gear' },   // Green
-            { color: '#80b1d3', label: 'Ninjago' },   // Blue
-            { color: '#bebada', label: 'Star Wars' }    // Purple
+            { color: '#fb8072', label: 'Books', angle: -60, offset: 15 },   // Red
+            { color: '#fdb462', label: 'Key Chain', angle: 0, offset: 15 },   // Orange
+            { color: '#ffe45e', label: 'Friends', angle: 60, offset: 15 },   // Yellow
+            { color: '#8dd3c7', label: 'Gear', angle: -60, offset: -15 },   // Green
+            { color: '#80b1d3', label: 'Ninjago', angle: 0, offset: -15 },   // Blue
+            { color: '#bebada', label: 'Star Wars', angle: 60, offset: -15 }    // Purple
         ];
 
         vis.colorMap = {
@@ -92,6 +92,28 @@ class Hexagon {
             .attr('stroke', d => d.color)
             .attr('stroke-width', '2');
 
+        let labels = vis.svg.selectAll('.edge-label')
+            .data(vis.hexagonData);
+
+        labels.enter().append('text')
+            .merge(labels)
+            .attr('class', 'edge-label')
+            .attr('x', (d, i) => (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].x + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].x) / 2 + d.offset)
+            .attr('y', (d, i) => (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].y + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].y) / 2 + d.offset)
+            .attr('fill', d => d.color)
+            .text(d => d.label)
+            .attr('font-size', '25px')
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'middle')
+            .attr('transform', (d, i) => {
+                let x = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].x + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].x) / 2;
+                let y = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].y + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].y) / 2;
+                return `translate(${x}, ${y}) rotate(${d.angle}) translate(-${x}, -${y})`;
+            });
+
+
+
+
         // Find midpoints of each sector of the hexagon
         vis.hexagonMidpoints = vis.calculateHexagonMidpoints();
 
@@ -104,7 +126,7 @@ class Hexagon {
             .force("themeForce", vis.themeForce())
             .alphaDecay(0.05);
 
-        vis.updateData(vis.data);
+        // vis.updateData(vis.data);
         // vis.updateLines();
     }
 
@@ -113,7 +135,7 @@ class Hexagon {
         // const center = { x: vis.centerX, y: vis.centerY };
         const points = vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius);
         const midpoints = [];
-    
+
         for (let i = 0; i < points.length; i++) {
             const nextIndex = (i + 1) % points.length;
             // Calculate the midpoint of each hexagon edge
@@ -188,7 +210,7 @@ class Hexagon {
             //     randomY = Math.random() * (2 * vis.hexRadius) - vis.hexRadius + vis.config.containerHeight / 2;
             // } while (!vis.pointInHexagon(randomX, randomY, vis.hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, vis.hexRadius)));
             // vis.circleData.push({ x: randomX, y: randomY, setNum: d.set_num, data: d });
-            vis.circleData.push({ x: centerX, y: centerY, setNum: d.set_num, data: d})
+            vis.circleData.push({ x: centerX, y: centerY, setNum: d.set_num, data: d })
         });
 
         console.log(vis.data);
@@ -301,13 +323,13 @@ class Hexagon {
 
         // TODO: Testing to find middle point
         vis.svg.selectAll('.midpoint')
-        .data([{}])
-        .enter().append('circle')
-        .attr('class', 'midpoint')
-        .attr('cx', (d) => vis.centerX)
-        .attr('cy', (d) => vis.centerY)
-        .attr('r', 5)
-        .attr('fill', '#39FF14');
+            .data([{}])
+            .enter().append('circle')
+            .attr('class', 'midpoint')
+            .attr('cx', (d) => vis.centerX)
+            .attr('cy', (d) => vis.centerY)
+            .attr('r', 5)
+            .attr('fill', '#39FF14');
 
         let circles = vis.svg.selectAll('.circle')
             .data(vis.circleData);
