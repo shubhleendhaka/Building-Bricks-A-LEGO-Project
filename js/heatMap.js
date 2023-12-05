@@ -13,7 +13,6 @@ class HeatMap {
             }
         };
         this.data = _data;
-        this.dataArray = [];
 
         this.initVis();
     }
@@ -21,14 +20,9 @@ class HeatMap {
     initVis() {
         let vis = this;
 
-        const flarePalette = ['#F0E68C', '#FFD700', '#FFA500', '#FF8C00', '#FF4500'];
         vis.colorScale = d3.scaleSequential()
             .interpolator(d3.interpolateRgbBasis(["#e98d6b", "#e3685c", "#d14a61", "#b13c6c", "#8f3371", "#6c2b6d"]))
 
-        vis.minYear = d3.min(vis.data, d => d.year);
-        vis.maxYear = d3.max(vis.data, d => d.year);
-
-        console.log(vis.minYear, vis.maxYear);
 
         vis.data = this.data.filter(d => d.num_parts > 0);
 
@@ -37,31 +31,11 @@ class HeatMap {
             d.yearBinLabel = vis.getYearBinLabel(d.year);
         });
 
-        let setNums = new Set();
-        let hasDuplicates = false;
-
-        vis.data.forEach(d => {
-            if (setNums.has(d.set_num)) {
-                hasDuplicates = true;
-            } else {
-                setNums.add(d.set_num);
-            }
-        });
-
-        console.log('Has duplicates:', hasDuplicates);
-
-
-
 
 
         // Set up SVG container
         vis.config.width = vis.config.containerWidth - vis.config.margin.left * 2 - vis.config.margin.right;
         vis.config.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom * 3 - vis.config.legendHeight;
-
-
-
-
-        // Scales
 
 
         vis.pieceBins = ["1-50", "51-100", "101-150", "151-200", "200+"];
@@ -83,6 +57,8 @@ class HeatMap {
         vis.xAxis = d3.axisBottom(vis.xScale).tickValues(vis.yearBins);
 
         vis.yAxis = d3.axisLeft(vis.yScale).tickValues(vis.pieceBins).tickSize(0);
+
+
 
         vis.svg = vis.config.parentElement.append('svg')
             .attr('width', vis.config.containerWidth)
@@ -124,7 +100,7 @@ class HeatMap {
             .call(vis.yAxis);
 
         vis.yAxisGroup.selectAll(".tick text")
-            .attr("transform", "rotate(-90), translate(-10, -14)")
+            .attr("transform", "rotate(-90), translate(20, -14)")
             .style("text-anchor", "end");
 
         vis.svg.append('text')
@@ -161,47 +137,6 @@ class HeatMap {
     updateVis() {
         let vis = this;
 
-        // vis.filteredData = new Map();
-
-        // vis.data.forEach((d) => {
-        //     const setNum = d.set_num;
-        //     const year = Math.floor(d.set_year / vis.year_skip) * vis.year_skip;
-        //     const size = Math.floor(d.set_num_parts / vis.size_skip) * vis.size_skip;
-        //     if (!vis.filteredData.has(setNum)) {
-        //         vis.filteredData.set(setNum, year + ":" + size);
-        //     }
-        // });
-
-        // vis.filteredData = Array.from(vis.filteredData);
-
-        // vis.blockData = new Map();
-        // vis.setSizes.forEach(d => {
-        //     vis.years.forEach(v => vis.blockData.set(v + ":" + d, 0))
-        // })
-
-        // let maxSize = Math.max(...vis.setSizes);
-        // vis.filteredData.forEach(function (d) {
-        //     const str = d[1].split(":");
-        //     const year = str[0];
-        //     const size = str[1];
-        //     if (vis.blockData.has(year + ":" + size)) {
-        //         vis.blockData.set(year + ":" + size, vis.blockData.get(year + ":" + size) + 1);
-        //     } else if (size > maxSize) {
-        //         if (!vis.blockData.has(year + ":" + maxSize)) {
-        //             vis.blockData.set(year + ":" + maxSize, 0);
-        //         }
-        //         vis.blockData.set(year + ":" + maxSize, vis.blockData.get(year + ":" + maxSize) + 1);
-        //     }
-        // });
-
-        // vis.blockData = Array.from(vis.blockData, ([name, value]) => ({ name, value }));
-        // console.log(vis.blockData);
-
-        // vis.yAxis = d3.axisLeft(vis.yScale).tickValues(vis.setSizes).tickFormat(d => (d + "-" + (d + vis.size_skip - 1)));
-
-        // vis.blockRange = vis.blockData.map(d => d.value);
-        // Heat map blocks colour range
-
         const aggregatedData = d3.rollup(
             vis.data,
             v => v.length, // Count the occurrences for each group
@@ -209,14 +144,10 @@ class HeatMap {
             d => d.pieceBinLabel
         );
 
-        console.log(aggregatedData);
         vis.dataArray = Array.from(aggregatedData, ([yearBinLabel, values]) =>
             Array.from(values, ([pieceBinLabel, count]) => ({ yearBinLabel, pieceBinLabel, count }))
         ).flat();
 
-        vis.totalCount = vis.dataArray.reduce((sum, d) => sum + d.count, 0);
-        console.log(vis.totalCount);
-        // get sum of counts from data array
 
 
         vis.blockRange = vis.dataArray.map(d => d.count);
@@ -238,9 +169,7 @@ class HeatMap {
             .attr('height', vis.yScale.bandwidth())
             .style('fill', d => { return vis.colorScale(d.count); })
 
-        function hexToDecimal(hex) {
-            return parseInt(hex.replace("#", ""), 16);
-        }
+
 
         vis.chart.selectAll('.block-text')
             .data(vis.dataArray)
@@ -250,18 +179,12 @@ class HeatMap {
             .attr('text-anchor', 'middle')
             .style('fill', d => {
                 const blockColor = vis.colorScale(d.count);
-
                 const textColor = d3.lab(blockColor).l <= d3.lab("#e3685c").l ? "white" : "black";
                 return textColor;
             })
             .attr('dominant-baseline', 'central')
             .text(d => d.count);
 
-        // vis.xAxisGroup.call(vis.xAxis);
-        // vis.yAxisGroup.call(vis.yAxis)
-        //     .selectAll("text")
-        //     .style("text-anchor", "start")
-        //     .attr("transform", "rotate(-90) translate(-10, -14)");
         vis.renderLegend();
     }
 
