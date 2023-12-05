@@ -26,12 +26,18 @@
 .page-header {
     text-align: left;
     margin: 0;
-    padding: 20px;
+    padding: 8px;
+    background-image: url('../data/block pattern.jpeg'); /* Path to your background image */
+    background-repeat: repeat; /* Ensures the image repeats to fill the space */
+    background-size: 300px 300px; /* Adjust the size as needed to create a repeating pattern */
+    /* Additional styling as needed */
 }
 
 .page-header h1 {
     margin: 0;
     padding: 0;
+    font-size: 1.4em; /* Adjust font size if necessary */
+    line-height: 1.2;
     display: flex; /* Use flexbox to align text and image inline */
     align-items: center; /* Center align the items vertically */
 }
