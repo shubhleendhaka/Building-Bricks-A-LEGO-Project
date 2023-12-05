@@ -32,8 +32,17 @@
 .page-header h1 {
     margin: 0;
     padding: 0;
-    /* Add any additional styling you want for your title */
+    display: flex; /* Use flexbox to align text and image inline */
+    align-items: center; /* Center align the items vertically */
 }
+
+.lego-logo {
+    /* Adjust the size of the logo as needed */
+    height: 3.5em; /* Makes the logo's height match the surrounding text size */
+    width: auto; /* Maintain the aspect ratio of the logo */
+    padding: 0 0.2em; /* Optional: add some space around the logo */
+}
+
 
 
 /* Hexagon */
