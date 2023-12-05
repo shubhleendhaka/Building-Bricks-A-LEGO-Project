@@ -1,5 +1,11 @@
 // TODO: TESTING WITH DATA THAT HAS X-Y
-d3.csv("data/hexagon_data_with_coordinates_v4_MANUAL.csv").then((data) => {
+// d3.csv("data/hexagon_data_with_coordinates_v4_MANUAL.csv").then((data) => {
+// d3.csv("data/hexagon_data_with_coordinates_v5.csv").then((data) => {
+// d3.csv("data/hexagon_data_with_coordinates_v6.csv").then((data) => {
+// d3.csv("data/hexagon_data_with_coordinates_v7.csv").then((data) => {
+// d3.csv("data/hexagon_data_with_coordinates_v8.csv").then((data) => {
+// d3.csv("data/hexagon_data_with_coordinates_v9.csv").then((data) => {
+d3.csv("data/hexagon_data_with_coordinates_v23.csv").then((data) => {
 
 // d3.csv("data/hexagon_data.csv").then((data) => {
     // make a set of all the themes that are in the data
