@@ -1,7 +1,7 @@
-// TODO: REMOVE AFTER TESTING:
-// d3.csv("data/test_data.csv").then((data) => {
+// TODO: TESTING WITH DATA THAT HAS X-Y
+d3.csv("data/hexagon_data_with_coordinates_v4_MANUAL.csv").then((data) => {
 
-d3.csv("data/hexagon_data.csv").then((data) => {
+// d3.csv("data/hexagon_data.csv").then((data) => {
     // make a set of all the themes that are in the data
 
     const themes = new Set();
