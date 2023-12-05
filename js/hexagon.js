@@ -126,7 +126,7 @@ class Hexagon {
             .force("themeForce", vis.themeForce())
             .alphaDecay(0.05);
 
-        // vis.updateData(vis.data);
+        vis.updateData(vis.data);
         // vis.updateLines();
     }
 
