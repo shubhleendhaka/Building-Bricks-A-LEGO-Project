@@ -241,6 +241,7 @@ class HeatMap {
         function hexToDecimal(hex) {
             return parseInt(hex.replace("#", ""), 16);
         }
+
         vis.chart.selectAll('.block-text')
             .data(vis.dataArray)
             .join('text')
@@ -250,7 +251,7 @@ class HeatMap {
             .style('fill', d => {
                 const blockColor = vis.colorScale(d.count);
 
-                const textColor = contrastRatio >= 4.5 || d3.lab(blockColor).l <= d3.lab("#e3685c").l ? "white" : "black";
+                const textColor = d3.lab(blockColor).l <= d3.lab("#e3685c").l ? "white" : "black";
                 return textColor;
             })
             .attr('dominant-baseline', 'central')
@@ -281,18 +282,17 @@ class HeatMap {
         vis.chart.append("rect")
             .attr('width', vis.config.width)
             .attr('height', vis.config.legendHeight)
-            .attr("transform", `translate(0, ${vis.config.height + vis.config.legendHeight + vis.config.margin.bottom})`)
+            .attr("transform", `translate(0, ${vis.config.height + vis.config.legendHeight + vis.config.margin.bottom + 15})`)
             .attr('fill', "url(#linear-gradient)");
 
         let axisScale = d3.scaleLinear()
             .domain(vis.colorScale.domain())
             .range([0, vis.config.width]);
 
-        let xAxis = d3.axisBottom(axisScale).tickValues([0, 2500]);
-
+        let xAxis = d3.axisBottom(axisScale).tickValues(d3.range(0, 2501, 500));
         let xAxisGroup = vis.chartArea.append('g')
             .attr('class', 'axis x-axis')
-            .attr('transform', `translate(${0},${vis.config.height + vis.config.legendHeight * 2 + vis.config.margin.bottom})`)
+            .attr('transform', `translate(${0},${vis.config.height + vis.config.legendHeight * 2 + vis.config.margin.bottom + 16} )`)
             .call(xAxis);
 
         xAxisGroup.append('text')
@@ -300,7 +300,7 @@ class HeatMap {
             .style('font-size', '14px')
             .attr('text-anchor', 'middle')
             .attr('x', vis.config.width / 2)
-            .attr('y', -5)
+            .attr('y', -25)
             .attr('fill-opacity', 1)
             .text("Number of sets");
     }
