@@ -153,49 +153,65 @@ d3.csv("data/hexagon_data.csv").then((data) => {
 
 });
 
-fetch("../data/merged_dataset.zip")
-    .then((res) => res.blob())
-    .then((blob) => {
-        return new Promise((resolve, _) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result);
-            reader.readAsArrayBuffer(blob);
-        });
-    })
-    .then((b64) => {
-        // let content = b64.replace(/^data:.+;base64,/, '');
-        let content = b64;
-        let zip = new JSZip();
-        zip.loadAsync(content)
-            .then((zip) => {
-                return Promise.all(Object.keys(zip.files).map((filename) => {
-                    const file = zip.files[filename];
-                    return file.async('text').then((content) => {
-                        if (filename == "merged dataset.csv") {
-                            let data = d3.csvParse(content);
-                            
-                            data.forEach((d) => {
-                                d.set_year = +d.set_year;
-                                d.theme_id = +d.theme_id;
-                                d.set_num_parts = +d.set_num_parts;
-                                d.color_id = +d.color_id;
-                                d.rgb = d.rgb; // leaving rgb as string
-                            });
+d3.csv("data/sets.csv").then((data) => {
+    // Convert columns to numerical values
+    data.forEach((d) => {
+        d.year = +d.year;
+        d.num_parts = +d.num_parts;
+    });
 
-                            const heatMap = new HeatMap(
-                                {
-                                    parentElement: d3.select("#heat-map-container"),
-                                },
-                                data
-                            );
-                        }
-                    });
-                }))
-            })
-            .catch((error) => {
-                console.error('Error unzipping file:', error);
-            })
-    })
+    const heatMap = new HeatMap(
+        {
+            parentElement: d3.select("#heat-map-container"),
+        },
+        data
+    );
+
+});
+
+// fetch("../data/merged_dataset.zip")
+//     .then((res) => res.blob())
+//     .then((blob) => {
+//         return new Promise((resolve, _) => {
+//             const reader = new FileReader();
+//             reader.onloadend = () => resolve(reader.result);
+//             reader.readAsArrayBuffer(blob);
+//         });
+//     })
+//     .then((b64) => {
+//         // let content = b64.replace(/^data:.+;base64,/, '');
+//         let content = b64;
+//         let zip = new JSZip();
+//         zip.loadAsync(content)
+//             .then((zip) => {
+//                 return Promise.all(Object.keys(zip.files).map((filename) => {
+//                     const file = zip.files[filename];
+//                     return file.async('text').then((content) => {
+//                         if (filename == "merged dataset.csv") {
+//                             let data = d3.csvParse(content);
+
+//                             data.forEach((d) => {
+//                                 d.set_year = +d.set_year;
+//                                 d.theme_id = +d.theme_id;
+//                                 d.set_num_parts = +d.set_num_parts;
+//                                 d.color_id = +d.color_id;
+//                                 d.rgb = d.rgb; // leaving rgb as string
+//                             });
+
+//                             const heatMap = new HeatMap(
+//                                 {
+//                                     parentElement: d3.select("#heat-map-container"),
+//                                 },
+//                                 data
+//                             );
+//                         }
+//                     });
+//                 }))
+//             })
+//             .catch((error) => {
+//                 console.error('Error unzipping file:', error);
+//             })
+//     })
 
 // var zip = new JSZip();
 // zip.loadAsync("../")
