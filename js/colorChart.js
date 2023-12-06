@@ -22,7 +22,6 @@ class ColorChart {
         // Extract unique color values from data
         chart.uniqueColors = [...new Set(chart.data.map(d => d.rgb))];
 
-
         // Set up SVG container
         chart.svg = chart.config.parentElement.append('svg')
             .attr('id', 'color-chart')
@@ -62,21 +61,19 @@ class ColorChart {
             })
             .on('click', function (event, d) {
                 chart.activeColors = new Set();
+                console.log(chart.activeColors);
+                console.log(chart.selectedColors);
 
                 if (chart.selectedColors.has(d)) {
-
                     chart.selectedColors.delete(d);
                 } else {
                     chart.selectedColors.add(d);
                 }
+
                 chart.updateOpacity();
                 chart.dispatcher.call('selectedColors', event, chart.selectedColors);
 
-
-
             });
-
-
 
         // Append the main square (lego base) to the group
         legoGroup.append('rect')

@@ -1,6 +1,6 @@
-d3.csv("data/hexagon_data.csv").then((data) => {
-    // make a set of all the themes that are in the data
+d3.csv("data/hexagon_data_with_coords.csv").then((data) => {
 
+    // Make a set of all the themes that are in the data
     const themes = new Set();
 
 
@@ -22,12 +22,10 @@ d3.csv("data/hexagon_data.csv").then((data) => {
 
         d.top_5_similar_sets = jsonArray;
 
-
         Object.keys(d).forEach((key) => {
             if (key !== 'id' && key !== 'set_num' && key !== 'top_5_similar_sets' && key !== 'set_name' && key !== 'set_img_url' && key !== 'theme_name') {
                 d[key] = +d[key];
             }
-
 
         });
     });
@@ -112,6 +110,7 @@ d3.csv("data/hexagon_data.csv").then((data) => {
             }
             return true;
         });
+        console.log(filteredData);
 
         networkGraph.data = filteredData;
         networkGraph.updateData(filteredData);

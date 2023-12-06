@@ -6,9 +6,9 @@ class Hexagon {
             containerHeight: 600,
             margin: {
                 top: 0,
-                right: 10,
-                bottom: 10,
-                left: 10
+                right: 0,
+                bottom: 20,
+                left: 0
             }
         };
         this.dispatcher = dispatcher;
@@ -33,19 +33,6 @@ class Hexagon {
         return points;
     }
 
-    pointInHexagon(x, y, hexagonPoints) {
-        let isInside = false;
-        for (let i = 0, j = hexagonPoints.length - 1; i < hexagonPoints.length; j = i++) {
-            const xi = hexagonPoints[i].x, yi = hexagonPoints[i].y;
-            const xj = hexagonPoints[j].x, yj = hexagonPoints[j].y;
-
-            const intersect = ((yi > y) !== (yj > y)) &&
-                (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-            if (intersect) isInside = !isInside;
-        }
-        return isInside;
-    }
-
     initVis() {
         let vis = this;
 
@@ -59,23 +46,25 @@ class Hexagon {
 
         // Hexagon properties
         vis.hexRadius = 300;
+        vis.centerX = vis.config.containerWidth / 2 + vis.config.margin.left;
+        vis.centerY = vis.config.containerHeight / 2 + vis.config.margin.top;
 
         // Hexagon data
         vis.hexagonData = [
-            { color: '#fb8072', label: 'Books' },   // Red
-            { color: '#fdb462', label: 'Key Chain' },   // Orange
-            { color: '#ffe45e', label: 'Friends' },   // Yellow
-            { color: '#8dd3c7', label: 'Gear' },   // Green
-            { color: '#80b1d3', label: 'Ninjago' },   // Blue
-            { color: '#bebada', label: 'Star Wars' }    // Purple
+            { color: '#fb8072', label: 'Books', angle: -60, offset: 15 },   // Red
+            { color: '#80b1d3', label: 'Key Chain', angle: 0, offset: 15 },   // Blue
+            { color: '#ffe45e', label: 'Friends', angle: 60, offset: 15 },   // Yellow
+            { color: '#8dd3c7', label: 'Gear', angle: -60, offset: -15 },   // Green
+            { color: '#fdb462', label: 'Ninjago', angle: 0, offset: -15 },   // Orange
+            { color: '#bebada', label: 'Star Wars', angle: 60, offset: -15 }    // Purple
         ];
 
         vis.colorMap = {
             'Books': '#fb8072',    // Red
-            'Key Chain': '#fdb462',           // Orange
+            'Key Chain': '#80b1d3',           // Blue
             'Friends': '#ffe45e',           // Yellow
             'Gear': '#8dd3c7',      // Green
-            'Ninjago': '#80b1d3',           // Blue
+            'Ninjago': '#fdb462',           // Orange
             'Star Wars': '#bebada'          // Purple
         };
 
@@ -83,12 +72,31 @@ class Hexagon {
             .data(vis.hexagonData)
             .enter().append('line')
             .attr('class', 'edge')
-            .attr('x1', (d, i) => vis.hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, vis.hexRadius)[i].x)
-            .attr('y1', (d, i) => vis.hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, vis.hexRadius)[i].y)
-            .attr('x2', (d, i, nodes) => vis.hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, vis.hexRadius)[(i + 1) % nodes.length].x)
-            .attr('y2', (d, i, nodes) => vis.hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, vis.hexRadius)[(i + 1) % nodes.length].y)
+            .attr('x1', (d, i) => vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].x)
+            .attr('y1', (d, i) => vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].y)
+            .attr('x2', (d, i, nodes) => vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % nodes.length].x)
+            .attr('y2', (d, i, nodes) => vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % nodes.length].y)
             .attr('stroke', d => d.color)
             .attr('stroke-width', '2');
+
+        let labels = vis.svg.selectAll('.edge-label')
+            .data(vis.hexagonData);
+
+        labels.enter().append('text')
+            .merge(labels)
+            .attr('class', 'edge-label')
+            .attr('x', (d, i) => (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].x + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].x) / 2 + d.offset)
+            .attr('y', (d, i) => (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].y + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].y) / 2 + d.offset)
+            .attr('fill', d => d.color)
+            .text(d => d.label)
+            .attr('font-size', '25px')
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'middle')
+            .attr('transform', (d, i) => {
+                let x = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].x + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].x) / 2;
+                let y = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].y + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].y) / 2;
+                return `translate(${x}, ${y}) rotate(${d.angle}) translate(-${x}, -${y})`;
+            });
 
 
         vis.updateData(vis.data);
@@ -103,27 +111,22 @@ class Hexagon {
         vis.attachedPoints = [];
         vis.lineData = [];
 
+        let centerX = vis.config.containerWidth / 2;
+        let centerY = vis.config.containerHeight / 2;
+
+        // Push initial data for each point -> Each point should initialize in center of hexagon before forces move them around
         vis.data.forEach(d => {
-            // Generate random coordinates within the hexagon
-            let randomX, randomY;
-            do {
-                randomX = Math.random() * (2 * vis.hexRadius) - vis.hexRadius + vis.config.containerWidth / 2;
-                randomY = Math.random() * (2 * vis.hexRadius) - vis.hexRadius + vis.config.containerHeight / 2;
-            } while (!vis.pointInHexagon(randomX, randomY, vis.hexagonPoints(vis.config.containerWidth / 2, vis.config.containerHeight / 2, vis.hexRadius)));
-            vis.circleData.push({ x: randomX, y: randomY, setNum: d.set_num, data: d });
+            vis.circleData.push({x: d.x, y: d.y, setNum: d.set_num, data: d})
         });
+
         vis.updateVis();
 
     }
-
-
 
     updateVis() {
         // Update visualization if needed
         let vis = this;
         console.log("New data is ", vis.data.length, " items long ");
-
-
 
         vis.updateLines();
         vis.updateStyle();
@@ -150,16 +153,11 @@ class Hexagon {
                     return '2, 1';
                 } else return 'none'
             });
-
-
-
-
     }
 
     updateLines() {
         let vis = this;
         console.log("Updating lines");
-        console.log(vis.circleData)
 
         if (vis.clickedSet !== null) {
             vis.attachedPoints = vis.clickedSet.top_5_similar_sets;
@@ -173,8 +171,6 @@ class Hexagon {
                     console.log("Found point", point);
                     console.log("Selected point", vis.selectedPointX, vis.selectedPointY);
 
-
-
                     vis.lineData.push({
                         source: { x: vis.selectedPointX, y: vis.selectedPointY },
                         target: { x: point.x, y: point.y }
@@ -182,14 +178,12 @@ class Hexagon {
                 }
             });
 
-
-
         } else {
             vis.attachedPoints = [];
             vis.lineData = [];
         }
-        console.log(vis.lineData);
 
+        console.log(vis.lineData);
 
         let lines = vis.svg.selectAll('.connector')
             .data(vis.lineData);
@@ -204,7 +198,7 @@ class Hexagon {
             .attr('stroke', 'black')
             .attr('stroke-width', '0.5')
             .lower();
-        console.log("lines", lines)
+        // console.log("lines", lines)
         // Exit and remove unused lines
         lines.exit().remove();
     }
@@ -214,6 +208,7 @@ class Hexagon {
         // Render visualization if needed
         console.log("do be rendering")
         let vis = this;
+
         let circles = vis.svg.selectAll('.circle')
             .data(vis.circleData);
 
@@ -224,6 +219,15 @@ class Hexagon {
             .attr('cy', d => d.y)
             .attr('r', 3) // Set your desired radius
             .attr('fill', d => vis.colorMap[d.data.theme_name] ? vis.colorMap[d.data.theme_name] : 'white')
+
+            // {
+            //     if (vis.colorMap[d.data.theme_name]) {
+            //         return vis.colorMap[d.data.theme_name];
+            //     } else {
+            //         return 'white';
+            //     }
+            // }
+
             .attr('stroke', 'black')
             .attr('stroke-width', '0') // ! STATIC VISUALIZATION FOR M3
             .on('mouseover', function (event, d) {
@@ -264,12 +268,13 @@ class Hexagon {
 
             })
 
+        // Update circles
+        circles
+            .attr('cx', d => d.x)
+            .attr('cy', d => d.y)
+            .attr('fill', d => vis.colorMap[d.data.theme_name] ? vis.colorMap[d.data.theme_name] : 'white');
 
         circles.exit().remove();
-
-
-
-
 
     }
 }
