@@ -256,6 +256,7 @@ class NetworkGraph {
             })
             .on('click', function (event, d) {
                 if (vis.clickedSet && vis.clickedSet.set_num === d.setNum) {
+                    d3.select(this).classed('clicked', false);
                     vis.clickedSet = null;
                     vis.hoveredSet = d.data;
                     vis.attachedPoints = [];
@@ -264,6 +265,7 @@ class NetworkGraph {
 
 
                 } else {
+                    d3.select(this).classed('clicked', true);
                     vis.clickedSet = d.data;
                     vis.hoveredSet = null;
                     vis.selectedPointX = d.x;
