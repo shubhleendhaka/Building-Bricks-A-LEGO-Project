@@ -24,13 +24,14 @@ class Cards {
     initVis() {
         let vis = this;
         vis.colorMap = {
-            'Books': '#fb8072',    // Red
-            'Key Chain': '#80b1d3',           // Orange
-            'Friends': '#ffe45e',           // Yellow
-            'Gear': '#8dd3c7',      // Green
-            'Ninjago': '#fdb462',           // Blue
-            'Star Wars': '#bebada'          // Purple
+            'Books': { color: '#fb8072', font: 'white' },      // Red
+            'Key Chain': { color: '#80b1d3', font: 'white' },   // Orange
+            'Friends': { color: '#ffe45e', font: 'black' },    // Yellow
+            'Gear': { color: '#8dd3c7', font: 'black' },       // Green
+            'Ninjago': { color: '#fdb462', font: 'white' },     // Blue
+            'Star Wars': { color: '#bebada', font: 'white' }    // Purple
         };
+
         vis.updateVis()
 
 
@@ -66,26 +67,29 @@ class Cards {
                     translateCard = ` translateY(-20px);`
                 }
 
+                let fontColor = vis.colorMap[currentCard.theme_name].font;
+                let cardColor = vis.colorMap[currentCard.theme_name].color;
+                console.log("Font Color", fontColor)
+
 
                 cardsHTML += `
-                <div class="selected-card" style="--selected-card-color: ${vis.colorMap[currentCard.theme_name]};${transformation}${translateCard}">
-                <div class="card-content" style="${transformation}${translateText}}">
-                <h2 class="card-title">${currentCard.set_name}</h2>
-
-                        <img class="card-image" src=${currentCard.set_img_url} /> 
-                        <div class="card-info-titles">
-                            <h4>Year</h4>
-                            <h4>Theme</h4>
-                            <h4>Pieces</h4>
-                        </div>
-                        <div class="card-info">
-                            <h5>${currentCard.set_year}</h5>
-                            <h5>${currentCard.theme_name}</h5>
-                            <h5>${currentCard.num_parts}</h5>
+                    <div class="selected-card" style="--selected-card-color: ${cardColor};${transformation}${translateCard}">
+                        <div class="card-content" style="${transformation}${translateText} color:${fontColor}">
+                            <h2 class="card-title">${currentCard.set_name}</h2>
+                            <img class="card-image" src=${currentCard.set_img_url} /> 
+                            <div class="card-info-titles">
+                                <h4>Year</h4>
+                                <h4>Theme</h4>
+                                <h4>Pieces</h4>
+                            </div>
+                            <div class="card-info">
+                                <h5>${currentCard.set_year}</h5>
+                                <h5>${currentCard.theme_name}</h5>
+                                <h5>${currentCard.num_parts}</h5>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `
+                `;
 
             }
         }

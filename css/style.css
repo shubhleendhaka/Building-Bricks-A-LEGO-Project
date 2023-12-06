@@ -240,7 +240,7 @@ label {
     padding: 5px;
     font-size: 18px;
     margin: 0;
-    color: white;
+    /* color: white; */
 }
 
 .card-content {
@@ -343,14 +343,14 @@ button {
     min-width: 160px;
     color: #333;
     gap: 3px;
-  }
+}
 
-  .tooltip-title {
+.tooltip-title {
     color: #000;
     font-size: 16px;
-  }
+}
 
-  /* #tooltip ul {
+/* #tooltip ul {
     margin: 5px 0 0 0;
     padding-left: 20px;
   } */
