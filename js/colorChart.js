@@ -12,6 +12,7 @@ class ColorChart {
         this.dispatcher = dispatcher;
         this.activeColors = new Set();
         this.selectedColors = new Set();
+        this.hoveredColor = null;
         this.initChart();
 
     }
@@ -76,18 +77,31 @@ class ColorChart {
             });
 
         // Append the main square (lego base) to the group
+
+
         legoGroup.append('rect')
             .attr('width', chart.config.squareSize)
             .attr('height', chart.config.squareSize)
             .style('fill', d => `#${d}`)
             .attr('stroke', d => darkenColor(`#${d}`)) // Darken the fill color for the stroke
             .attr('stroke-width', 1.75)
-            .attr('opacity', d => {
-                console.log(chart.activeColors.size === 0 || chart.activeColors.has(d));
-                return chart.activeColors.size === 0 || chart.activeColors.has(d) ? 1 : 0.2;
-            });
+            .attr('opacity', d => (chart.hoveredColor && chart.hoveredColor === d) || chart.activeColors.size === 0 || chart.activeColors.has(d) ? 1 : 0.2) // Store original opacity
+            .attr('class', 'lego-rect') // Add a class for styling;
+            .on('mouseover', function (event, d) {
+                chart.hoveredColor = d;
+                chart.updateOpacity(d);
+            })
+            .on('mouseout', function (event, d) {
+                chart.hoveredColor = null;
+                chart.updateOpacity(null);
+            }
+            );
+
+
+
+
         // Define the size and spacing of the bumps
-        let bumpSize = chart.config.squareSize / 4; // Diameter of the bump
+        let bumpSize = chart.config.squareSize / 2; // Diameter of the bump
 
         // Calculate the gap by dividing the total remaining space by 3 (two gaps at the edges and one in the middle)
         //let totalBumpWidth = bumpSize;
@@ -96,13 +110,48 @@ class ColorChart {
 
         // Calculate the x and y position for the bumps on a 2x2 lego brick
         let bumpPositions = [
-            { x: initialOffset + bumpSize / 2, y: initialOffset + bumpSize / 2 }, //top left
-            { x: chart.config.squareSize - initialOffset - bumpSize / 2, y: initialOffset + bumpSize / 2 }, //top right
-            { x: initialOffset + bumpSize / 2, y: chart.config.squareSize - initialOffset - bumpSize / 2 }, // bottom left
-            { x: chart.config.squareSize - initialOffset - bumpSize / 2, y: chart.config.squareSize - initialOffset - bumpSize / 2 } // bottom right
-        ];
+            {
+                x: chart.config.squareSize / 2,
+                y: chart.config.squareSize / 2
+            }
 
+
+        ];
         // Append circles (lego bumps) to the group
+        // Append a filter element to the SVG
+        var defs = legoGroup.append("defs");
+
+
+        var dropShadowFilter = defs.append('svg:filter')
+            .attr('id', 'drop-shadow')
+            .attr('filterUnits', "userSpaceOnUse")
+            .attr('width', '250%')
+            .attr('height', '250%');
+
+        dropShadowFilter.append('svg:feGaussianBlur')
+            .attr('in', 'SourceAlpha') // Use alpha channel of source graphic for blur
+            .attr('stdDeviation', 2)
+            .attr('result', 'blur-out');
+
+        dropShadowFilter.append('svg:feOffset')
+            .attr('in', 'blur-out')
+            .attr('dx', 3)
+            .attr('dy', 3)
+            .attr('result', 'offset-out');
+
+        dropShadowFilter.append('svg:feComponentTransfer')
+            .attr('in', 'offset-out')
+            .attr('result', 'shadow-out')
+            .append('feFuncA')
+            .attr('type', 'linear')
+            .attr('slope', 0.2); // Adjust the alpha value (opacity) of the shadow
+
+        dropShadowFilter.append('svg:feBlend')
+            .attr('in', 'SourceGraphic')
+            .attr('in2', 'shadow-out')
+            .attr('mode', 'normal');
+
+        // Create a shadow for each circle
         bumpPositions.forEach(pos => {
             legoGroup.append('circle')
                 .attr('cx', pos.x)
@@ -110,17 +159,21 @@ class ColorChart {
                 .attr('r', bumpSize / 2)
                 .style('fill', d => `#${d}`)
                 .attr('stroke', d => darkenColor(`#${d}`)) // Darken the fill color for the stroke
-                .attr('stroke-width', 1.5);
+                .attr('stroke-width', 1.5)
+                .style("filter", "url(#drop-shadow)"); // Apply the drop shadow filter
         });
+
 
         // Add any additional styling or interactivity as required
     }
 
-    updateOpacity() {
+    updateOpacity(color) {
         let chart = this;
         chart.svg.selectAll('.lego-group')
             .attr('opacity', d => {
-                if (chart.activeColors.size === 0 && chart.selectedColors.size === 0) {
+                if (color && color === d) {
+                    return 1;
+                } else if (chart.activeColors.size === 0 && chart.selectedColors.size === 0) {
                     return 1
                 } else if (chart.activeColors.has(d) || chart.selectedColors.has(d)) {
                     return 1;

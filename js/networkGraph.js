@@ -127,7 +127,7 @@ class NetworkGraph {
 
         // Push initial data for each point -> Each point should initialize in center of hexagon before forces move them around
         vis.data.forEach(d => {
-            vis.circleData.push({x: d.x, y: d.y, setNum: d.set_num, data: d})
+            vis.circleData.push({ x: d.x, y: d.y, setNum: d.set_num, data: d })
         });
 
         vis.updateVis();

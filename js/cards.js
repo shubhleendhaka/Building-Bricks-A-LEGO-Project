@@ -25,10 +25,10 @@ class Cards {
         let vis = this;
         vis.colorMap = {
             'Books': '#fb8072',    // Red
-            'Key Chain': '#fdb462',           // Orange
+            'Key Chain': '#80b1d3',           // Orange
             'Friends': '#ffe45e',           // Yellow
             'Gear': '#8dd3c7',      // Green
-            'Ninjago': '#80b1d3',           // Blue
+            'Ninjago': '#fdb462',           // Blue
             'Star Wars': '#bebada'          // Purple
         };
         vis.updateVis()
@@ -57,12 +57,21 @@ class Cards {
 
                 let currentCard = vis.cardData[i];
                 console.log(currentCard);
+                let transformation = ''
+                let translateText = ''
+                let translateCard = ''
+                if (cardsHTML !== '') {
+                    transformation = `transform: scaleY(-1)`
+                    translateText = ` translateY(20px);`;
+                    translateCard = ` translateY(-20px);`
+                }
 
 
                 cardsHTML += `
-                <div class="selected-card" style="--selected-card-color: ${vis.colorMap[currentCard.theme_name]};">
-                    <h2 class="card-title">${currentCard.set_name}</h2>
-                    <div class="card-content">
+                <div class="selected-card" style="--selected-card-color: ${vis.colorMap[currentCard.theme_name]};${transformation}${translateCard}">
+                <div class="card-content" style="${transformation}${translateText}}">
+                <h2 class="card-title">${currentCard.set_name}</h2>
+
                         <img class="card-image" src=${currentCard.set_img_url} /> 
                         <div class="card-info-titles">
                             <h4>Year</h4>
@@ -80,9 +89,8 @@ class Cards {
 
             }
         }
-        // }
-        vis.config.parentElement.html(cardsHTML);
 
+        vis.config.parentElement.html(cardsHTML);
     }
 }
 
