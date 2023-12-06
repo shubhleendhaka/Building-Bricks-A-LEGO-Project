@@ -180,7 +180,6 @@ class HeatMap {
             .attr('height', vis.yScale.bandwidth())
             .style('fill', d => { return vis.colorScale(d.count); })
             .on('mouseover', (event, d) => {
-                console.log(d);
                 d3.select('#tooltip')
                 .style('display', 'flex')
                 .style('left', event.pageX + vis.config.tooltipPadding + 'px')
@@ -196,10 +195,6 @@ class HeatMap {
             .on('mouseleave', () => {
                 d3.select('#tooltip').style('display', 'none');
             })
-
-
-        // remove yAxis line
-
 
         // vis.chart.selectAll('.block-text')
         //     .data(vis.dataArray)
