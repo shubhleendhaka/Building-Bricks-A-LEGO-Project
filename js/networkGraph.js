@@ -51,12 +51,12 @@ class NetworkGraph {
 
         // Hexagon data
         vis.hexagonData = [
-            { color: '#fb8072', label: 'Books', angle: -60, offset: 15 },   // Red
-            { color: '#80b1d3', label: 'Key Chain', angle: 0, offset: 15 },   // Blue
-            { color: '#ffe246', label: 'Friends', angle: 60, offset: 15 },   // Yellow
-            { color: '#8dd3c7', label: 'Gear', angle: -60, offset: -15 },   // Green
-            { color: '#fdb462', label: 'Ninjago', angle: 0, offset: -15 },   // Orange
-            { color: '#bebada', label: 'Star Wars', angle: 60, offset: -15 }    // Purple
+            { color: '#fb8072', label: 'Books', angle: -60, offset: 20, xOffset: -10, yOffset: 20 },   // Red
+            { color: '#80b1d3', label: 'Key Chain', angle: 0, offset: 20, xOffset: -10, yOffset: 0 },   // Blue
+            { color: '#ffe246', label: 'Friends', angle: 60, offset: 20, xOffset: -8, yOffset: -10 },   // Yellow
+            { color: '#8dd3c7', label: 'Gear', angle: -60, offset: -15, xOffset: 10, yOffset: -20 },   // Green
+            { color: '#fdb462', label: 'Ninjago', angle: 0, offset: -18, xOffset: 25, yOffset: -3 },   // Orange
+            { color: '#bebada', label: 'Star Wars', angle: 60, offset: -15, xOffset: 10, yOffset: 15 }    // Purple
         ];
 
         vis.colorMap = {
@@ -85,24 +85,30 @@ class NetworkGraph {
         labels.enter().append('text')
             .merge(labels)
             .attr('class', 'edge-label')
-            .attr('x', (d, i) => (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].x + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].x) / 2 + d.offset)
-            .attr('y', (d, i) => (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].y + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].y) / 2 + d.offset)
+            .attr('x', (d, i) => {
+                const midX = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].x 
+                              + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].x) / 2;
+                return midX + d.offset + (d.xOffset || 0); // Add the xOffset here
+            })
+            .attr('y', (d, i) => {
+                const midY = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].y 
+                              + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].y) / 2;
+                return midY + d.offset + (d.yOffset || 0); // Add the yOffset here
+            })
             .attr('fill', d => d.color)
             .text(d => d.label)
             .attr('font-size', '25px')
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'middle')
             .attr('transform', (d, i) => {
-                let x = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].x + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].x) / 2;
-                let y = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].y + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].y) / 2;
-                return `translate(${x}, ${y}) rotate(${d.angle}) translate(-${x}, -${y})`;
+                let x = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].x 
+                         + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].x) / 2 
+                         + (d.xOffset || 0); // Apply xOffset here as well
+                let y = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].y 
+                         + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].y) / 2 
+                         + (d.yOffset || 0); // Apply yOffset here as well
+                return `rotate(${d.angle},${x},${y})`; // Adjusted rotation application
             });
-
-        // // TODO: REMOVE THIS AFTER TESTING
-        // vis.svg.append('polygon')
-        // .attr('points', vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius).map(p => `${p.x},${p.y}`).join(' '))
-        // .attr('fill', 'black');
-
 
         vis.updateData(vis.data);
         // vis.updateLines();
