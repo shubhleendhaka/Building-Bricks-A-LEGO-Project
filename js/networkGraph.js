@@ -278,6 +278,7 @@ class NetworkGraph {
 
             })
 
+
         // Update circles
         circles
             .attr('cx', d => d.x)
@@ -290,6 +291,9 @@ class NetworkGraph {
             });
 
         circles.exit().remove();
+
+        vis.updateLines();
+        vis.updateStyle();
 
     }
 }
