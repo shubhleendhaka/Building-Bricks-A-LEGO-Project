@@ -2,4 +2,8 @@ data/merged_dataset.csv
 data/top6_themes_subset.csv
 
 # Vscode settings
-.vscode
+.vscode/
+
+# Python Scripts + Venv
+scripts/
+447-venv/
