@@ -40,6 +40,7 @@ d3.csv("data/hexagon_data_with_coords.csv").then((data) => {
 
 
 
+
     console.log("Themes are ", themes);
     const dispatcher = d3.dispatch(
         "cardData",
@@ -73,6 +74,8 @@ d3.csv("data/hexagon_data_with_coords.csv").then((data) => {
 
     dispatcher.on("cardData", (cardData) => {
         cards.cardData = cardData;
+
+
         cards.updateVis();
 
         let activeColors = new Set();
@@ -127,13 +130,31 @@ d3.csv("data/hexagon_data_with_coords.csv").then((data) => {
                 networkGraph.clickedSet = point;
                 networkGraph.updateVis();
                 dispatcher.call('cardData', event, [point, null]);
+            } else {
+                dispatcher.call('cardData', event, [null, null]);
             }
 
         }
     });
 
+    d3.select("#search-button").on("click", () => {
+        let inputValue = d3.select("#search-input").node().value;
+
+        let point = networkGraph.data.find(d => d.set_name === inputValue);
+
+        if (point !== undefined) {
+            networkGraph.clickedSet = point;
+            networkGraph.updateVis();
+            dispatcher.call('cardData', event, [point, null]);
+        } else {
+            dispatcher.call('cardData', event, [null, null]);
+        }
+    });
+
+
+
     // Pick Random Listener
-    d3.select("#pick-random").on("click", (event) => {
+    d3.select("#shuffle-button").on("click", (event) => {
         // TODO: Dispatch random selection event
 
         let randomPoint = networkGraph.data[Math.floor(Math.random() * networkGraph.data.length)];
