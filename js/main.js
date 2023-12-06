@@ -136,6 +136,9 @@ d3.csv("data/hexagon_data_with_coords.csv").then((data) => {
                 dispatcher.call('cardData', event, [null, null]);
             }
 
+
+            d3.select("#search-input").node().value = "";
+
         }
     });
 
@@ -153,6 +156,8 @@ d3.csv("data/hexagon_data_with_coords.csv").then((data) => {
             networkGraph.updateVis();
             dispatcher.call('cardData', event, [null, null]);
         }
+        d3.select("#search-input").node().value = "";
+
     });
 
 
