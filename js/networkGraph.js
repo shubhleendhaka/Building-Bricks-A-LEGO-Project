@@ -239,7 +239,7 @@ class NetworkGraph {
             .attr('stroke', 'black')
             .attr('stroke-width', '0') // ! STATIC VISUALIZATION FOR M3
             .on('mouseover', function (event, d) {
-                if (!d3.select(this).classed('clicked')) {
+                if (vis.clickedSet === null || vis.clickedSet.set_num !== d.setNum) {
                     vis.hoveredSet = d.data;
                     console.log("Hovered set", d)
                     d3.select(this).raise();
@@ -248,7 +248,7 @@ class NetworkGraph {
                 }
             })
             .on('mouseout', function (event, d) {
-                if (!d3.select(this).classed('clicked')) {
+                if (vis.clickedSet === null || vis.clickedSet.set_num !== d.setNum) {
                     vis.hoveredSet = null;
 
                     vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
@@ -257,22 +257,22 @@ class NetworkGraph {
             })
             .on('click', function (event, d) {
                 if (vis.clickedSet && vis.clickedSet.set_num === d.setNum) {
-                    d3.select(this).classed('clicked', false);
                     vis.clickedSet = null;
                     vis.hoveredSet = d.data;
                     vis.attachedPoints = [];
                     vis.lineData = [];
+
                     // change color of clicked circle
 
 
                 } else {
-                    d3.select(this).classed('clicked', true);
                     vis.clickedSet = d.data;
                     vis.hoveredSet = null;
                     vis.selectedPointX = d.x;
                     vis.selectedPointY = d.y;
                     console.log("Clicked set", d)
                 }
+                vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
 
                 vis.updateLines();
                 vis.updateStyle();
