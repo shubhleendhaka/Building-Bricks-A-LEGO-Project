@@ -116,6 +116,7 @@ class HeatMap {
             .attr('class', 'axis text')
             .style('fill', 'black')
             .style('font-size', '14px')
+            .style('line-height', '20px') // Increase line height
             .attr('text-anchor', 'middle')
             .attr('x', -vis.config.height / 2 - vis.config.margin.top)
             .attr('y', vis.config.margin.left + 10)

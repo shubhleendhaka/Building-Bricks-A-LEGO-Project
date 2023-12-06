@@ -77,7 +77,8 @@ class NetworkGraph {
             .attr('x2', (d, i, nodes) => vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % nodes.length].x)
             .attr('y2', (d, i, nodes) => vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % nodes.length].y)
             .attr('stroke', d => d.color)
-            .attr('stroke-width', '10');
+            .attr('stroke-width', '10')
+            .attr('stroke-linecap', 'round');
 
         let labels = vis.svg.selectAll('.edge-label')
             .data(vis.hexagonData);
