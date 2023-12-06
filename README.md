@@ -10,6 +10,6 @@ The project is designed to be optimal on a screensize of 1536 x 725 and is suppo
 
 ![Project LOGO](https://github.students.cs.ubc.ca/CPSC447-2023W-T1/g10/blob/main/data/project_image.png?raw=true)
 
-Inspiration for Visualizations:
-https://bricknerd.com/home/the-lego-color-palette-2023-edition-1-24-23
-https://d3-graph-gallery.com/graph/heatmap_basic.html 
+Inspiration for Visualizations:  
+https://bricknerd.com/home/the-lego-color-palette-2023-edition-1-24-23  
+https://d3-graph-gallery.com/graph/heatmap_basic.html   
