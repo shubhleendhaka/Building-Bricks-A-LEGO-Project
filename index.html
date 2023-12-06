@@ -6,6 +6,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="data:;base64,iVBORwOKGO=" />
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <body>
@@ -19,6 +20,24 @@
         </div>
         <div id="right-column">
             <div style="display: flex; width: 50%;">
+
+                <div id="search-container"
+                    style="position: absolute; top: 290px; left: 1300px; display: flex;  align-items: center;">
+
+                    <div id="btn-container" style="display: flex; align-items: center;">
+
+                        <button type="button" id="shuffle-button"><img src="data/diceimg.png" width="30"
+                                height="30" /></button>
+                        <button type="button" id="search-button" style="position: absolute; right: 10px; top: 5px;"><img
+                                src="data/search-symbol.png" width="20" height="20" /></button>
+
+                        <input type="text" id="search-input" name="search" placeholder="Search for a set" />
+
+
+                    </div>
+                </div>
+
+
                 <div id="network-graph-container"></div>
                 <div id="cards-container"></div>
             </div>
@@ -28,11 +47,7 @@
 
             <div id="tooltip"></div>
             <!-- Search and other center content here -->
-            <div id="parent-search-container">
-                <input type="text" id="search-input" name="search" placeholder="Search for a set" />
-                <button type="button" id="search-button"><img src="data/search.png" width="40" height="40" /></button>
-                <button type="button" id="pick-random"><img src="data/dice.png" width="50" height="50" /> </button>
-            </div>
+
         </div>
     </div>
 
