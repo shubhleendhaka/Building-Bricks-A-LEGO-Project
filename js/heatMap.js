@@ -4,6 +4,7 @@ class HeatMap {
             parentElement: _config.parentElement,
             containerWidth: 600,
             containerHeight: 500,
+            tooltipPadding: 15,
             legendHeight: 20,
             margin: {
                 top: 30,
@@ -178,24 +179,36 @@ class HeatMap {
             .attr('width', vis.xScale.bandwidth())
             .attr('height', vis.yScale.bandwidth())
             .style('fill', d => { return vis.colorScale(d.count); })
-
-
-        // remove yAxis line
-
-
-        vis.chart.selectAll('.block-text')
-            .data(vis.dataArray)
-            .join('text')
-            .attr('x', d => { return vis.xScale(d.yearBinLabel) + vis.xScale.bandwidth() / 2; })
-            .attr('y', d => { return vis.yScale(d.pieceBinLabel) + vis.yScale.bandwidth() / 2; })
-            .attr('text-anchor', 'middle')
-            .style('fill', d => {
-                const blockColor = vis.colorScale(d.count);
-                const textColor = d3.lab(blockColor).l <= d3.lab("#e3685c").l ? "white" : "black";
-                return textColor;
+            .on('mouseover', (event, d) => {
+                d3.select('#tooltip')
+                .style('display', 'flex')
+                .style('left', event.pageX + vis.config.tooltipPadding + 'px')
+                .style('top', event.pageY + vis.config.tooltipPadding + 'px')
+                .html(`
+                <div class="tooltip-title"><b>${d.count}</b> sets</div>
+                <div class="tooltip-subtitle">
+                    Between <u>${d.yearBinLabel}</u> with <u>${d.pieceBinLabel}</u> pieces
+                </div>
+                `);
+                d3.select(this).raise();
             })
-            .attr('dominant-baseline', 'central')
-            .text(d => d.count);
+            .on('mouseleave', () => {
+                d3.select('#tooltip').style('display', 'none');
+            })
+
+        // vis.chart.selectAll('.block-text')
+        //     .data(vis.dataArray)
+        //     .join('text')
+        //     .attr('x', d => { return vis.xScale(d.yearBinLabel) + vis.xScale.bandwidth() / 2; })
+        //     .attr('y', d => { return vis.yScale(d.pieceBinLabel) + vis.yScale.bandwidth() / 2; })
+        //     .attr('text-anchor', 'middle')
+        //     .style('fill', d => {
+        //         const blockColor = vis.colorScale(d.count);
+        //         const textColor = d3.lab(blockColor).l <= d3.lab("#e3685c").l ? "white" : "black";
+        //         return textColor;
+        //     })
+        //     .attr('dominant-baseline', 'central')
+        //     .text(d => d.count);
 
         vis.renderLegend();
     }
