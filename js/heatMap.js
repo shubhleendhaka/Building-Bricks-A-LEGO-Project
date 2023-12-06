@@ -21,7 +21,7 @@ class HeatMap {
         let vis = this;
 
         vis.colorScale = d3.scaleSequential()
-            .interpolator(d3.interpolateRgbBasis(["#e98d6b", "#e3685c", "#d14a61", "#b13c6c", "#8f3371", "#6c2b6d"]))
+            .interpolator(d3.interpolateRgbBasis(["#FFBE0B", "#FB5607", "#FF006E", "#8338EC"]))
 
 
         vis.data = this.data.filter(d => d.num_parts > 0);

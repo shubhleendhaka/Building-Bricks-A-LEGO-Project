@@ -10,41 +10,33 @@
 
 <body>
 
-    <header class="page-header">
-        <h1>
-            Building Bricks: A 
-            <img src="data/LEGO logo.png" alt="LEGO Logo" class="lego-logo">
-            Project
-        </h1>
-    </header>
-    
     <!-- Add HTML content, SVG drawing area, ... -->
     <div id="vis" class="three-column-layout">
         <div id="left-column">
-            <div id="hexagon-container"></div>
-            <div id="color-chart-container"></div>
+            <img src="data/heading.png" alt="LEGO Logo" style="width:500px;height:200px;margin-left:60px;"
+                class="lego-logo">
+            <div id="heat-map-container"></div>
         </div>
-        
-        <div id="center-column">
+        <div id="right-column">
+            <div style="display: flex; width: 50%;">
+                <div id="hexagon-container"></div>
+                <div id="cards-container"></div>
+            </div>
+            <div style="clear: both;"></div> <!-- Clear the float to prevent layout issues -->
+
+            <div id="color-chart-container"></div>
+
             <div id="tooltip"></div>
             <!-- Search and other center content here -->
             <div id="parent-search-container">
-                <label for="search-input">Search: </label>
-                <div id="search-container">
-                    <input type="text" id="search-input" name="search" placeholder="Search for a set" />
-                    <button type="button" id="pick-random">Pick for me!</button>
-                </div>
+                <input type="text" id="search-input" name="search" placeholder="Search for a set" />
+                <button type="button" id="search-button"><img src="data/search.png" width="40" height="40" /></button>
+                <button type="button" id="pick-random"><img src="data/dice.png" width="50" height="50" /> </button>
             </div>
-            <div id="cards-container"></div>
-            <div id="cards-container1"></div>
-        </div>
-        
-        <div id="right-column">
-            <div id="heat-map-container"></div>
         </div>
     </div>
-    
-    
+
+
 
     <!-- D3 bundle -->
     <script src="js/d3.v6.min.js"></script>

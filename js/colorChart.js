@@ -2,8 +2,8 @@ class ColorChart {
     constructor(_config, dispatcher, data) {
         this.config = {
             parentElement: _config.parentElement,
-            containerWidth: 600,
-            containerHeight: 150,
+            containerWidth: 870,
+            containerHeight: 350,
             margin: { top: 0, right: 10, bottom: 0, left: 10 },
             squareSize: 25, // Size of each color square
             gap: 4 // Gap between squares

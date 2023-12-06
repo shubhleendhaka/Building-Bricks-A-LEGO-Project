@@ -1,52 +1,69 @@
 /* style.css */
 .three-column-layout {
     display: flex;
-    justify-content: space-between; /* This will space out your columns */
-    align-items: flex-start; /* This aligns items to the top of the container */
+    justify-content: space-between;
+    /* This will space out your columns */
+    align-items: flex-start;
+    /* This aligns items to the top of the container */
 }
 
 #left-column {
-    flex: 1; /* Assigns a flex ratio */
-    order: 1; /* Ensures this column is first */
+    flex: 1;
+    /* Assigns a flex ratio */
+    order: 1;
+    /* Ensures this column is first */
     /* Additional styling */
 }
 
 #center-column {
-    flex: 2; /* Takes twice as much space as the other columns */
-    order: 2; /* Ensures this column is second */
+    flex: 2;
+    /* Takes twice as much space as the other columns */
+    order: 2;
+    /* Ensures this column is second */
     /* Additional styling */
 }
 
 #right-column {
-    flex: 1; /* Assigns a flex ratio */
-    order: 3; /* Ensures this column is last */
+    flex: 1;
+    /* Assigns a flex ratio */
+    order: 3;
+    /* Ensures this column is last */
     /* Additional styling */
 }
 
 .page-header {
     text-align: left;
     margin: 0;
+    min-height: 55px;
     padding: 8px;
-    background-image: url('../data/block pattern.jpeg'); /* Path to your background image */
-    background-repeat: repeat; /* Ensures the image repeats to fill the space */
-    background-size: 300px 300px; /* Adjust the size as needed to create a repeating pattern */
+    background-image: url('../data/title.png');
+    /* Path to your background image */
+    /* background-repeat: repeat; Ensures the image repeats to fill the space */
+    /* background-size: 300px 300px; */
+    /* Adjust the size as needed to create a repeating pattern */
     /* Additional styling as needed */
 }
 
 .page-header h1 {
     margin: 0;
     padding: 0;
-    font-size: 1.4em; /* Adjust font size if necessary */
+    font-size: 1.4em;
+    /* Adjust font size if necessary */
     line-height: 1.2;
-    display: flex; /* Use flexbox to align text and image inline */
-    align-items: center; /* Center align the items vertically */
+    display: flex;
+    /* Use flexbox to align text and image inline */
+    align-items: center;
+    /* Center align the items vertically */
 }
 
 .lego-logo {
     /* Adjust the size of the logo as needed */
-    height: 3.5em; /* Makes the logo's height match the surrounding text size */
-    width: auto; /* Maintain the aspect ratio of the logo */
-    padding: 0 0.2em; /* Optional: add some space around the logo */
+    height: 3.5em;
+    /* Makes the logo's height match the surrounding text size */
+    width: auto;
+    /* Maintain the aspect ratio of the logo */
+    padding: 0 0.2em;
+    /* Optional: add some space around the logo */
 }
 
 
@@ -57,7 +74,7 @@
 }
 
 /* Selection Cards */
-.selection-cards {
+/* .selection-cards {
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -134,7 +151,7 @@
     margin: 0;
 
     font-weight: 200;
-}
+} */
 
 /* Search + Pick for Me */
 #parent-search-container {
@@ -165,4 +182,158 @@ label {
     width: 100%;
     padding: 0;
     margin: 0.5rem 0 0 0;
+}
+
+/* .selected-card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    max-width: 200px;
+    margin: 20px;
+    align-items: center;
+    transition: transform 0.3s ease-in-out;
+} */
+
+
+.selected-card {
+    position: relative;
+    max-width: 200px;
+    z-index: 1;
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 10px;
+        background: var(--selected-card-color);
+        transform: skewX(30deg);
+        z-index: -1;
+    }
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: -80px;
+        width: 180px;
+        height: 100%;
+        border-radius: 10px;
+        background: var(--selected-card-color);
+        z-index: -1;
+    }
+}
+
+.selected-card:hover {
+    transform: scale(1.05);
+}
+
+.card-title {
+    text-align: center;
+    padding: 5px;
+    font-size: 20px;
+    margin: 0;
+    color: white;
+}
+
+.card-content {
+    padding: 15px;
+    text-align: center;
+}
+
+/* .trapezoid {
+    border-right: 30px solid transparent;
+    border-left: 30px solid transparent;
+    border-top: 180px solid #66B2ff;
+    height: 70px;
+} */
+
+.card-image {
+    width: auto;
+    height: auto;
+    max-height: 150px;
+    border-bottom: 1px solid #ccc;
+    margin: 0 auto;
+    /* Center the image horizontally */
+}
+
+.card-info-titles,
+.card-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.card-info-titles h4,
+.card-info h5 {
+    margin: 0;
+}
+
+#parent-search-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+label {
+    margin-right: 10px;
+}
+
+#search-container {
+    display: flex;
+    align-items: center;
+}
+
+#search-input {
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+}
+
+#pick-random,
+#search-button {
+    /* background-color: #f4d41a; */
+    /* Lego yellow */
+    color: black;
+    /* White text */
+    /* border: 2px solid #333; */
+    width: 100px;
+    height: 50px;
+    /* Lego black */
+    border-radius: 5px;
+    padding: 0;
+    /* Remove padding */
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+    /* Add margin between buttons */
+}
+
+#pick-random:hover,
+#search-button:hover {
+    background-color: #e3c00f;
+    /* Darker Lego yellow on hover */
+}
+
+#search-button img,
+#pick-random img {
+    width: 40px;
+    /* Adjust width as needed */
+    height: 40px;
+    /* Adjust height as needed */
+    border-radius: 5px;
+    background-color: #fff;
+    /* Background color for the icons */
+    vertical-align: middle;
+    /* Adjust vertical alignment */
 }
