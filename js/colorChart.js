@@ -2,9 +2,9 @@ class ColorChart {
     constructor(_config, dispatcher, data) {
         this.config = {
             parentElement: _config.parentElement,
-            containerWidth: 625,
-            containerHeight: 180,
-            margin: { top: 10, right: 10, bottom: 10, left: 10 },
+            containerWidth: 870,
+            containerHeight: 350,
+            margin: { top: 0, right: 10, bottom: 0, left: 10 },
             squareSize: 25, // Size of each color square
             gap: 4 // Gap between squares
         };
