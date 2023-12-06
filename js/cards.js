@@ -70,12 +70,17 @@ class Cards {
                 let fontColor = vis.colorMap[currentCard.theme_name].font;
                 let cardColor = vis.colorMap[currentCard.theme_name].color;
                 console.log("Font Color", fontColor)
+                let title = currentCard.set_name;
+                if (title.length > 47) {
+                    title = title.substring(0, 44) + '...';
+                }
+
 
 
                 cardsHTML += `
                     <div class="selected-card" style="--selected-card-color: ${cardColor};${transformation}${translateCard}">
                         <div class="card-content" style="${transformation}${translateText} color:${fontColor}">
-                            <h2 class="card-title">${currentCard.set_name}</h2>
+                            <h2 class="card-title">${title}</h2>
                             <img class="card-image" src=${currentCard.set_img_url} /> 
                             <div class="card-info-titles">
                                 <h4>Year</h4>
