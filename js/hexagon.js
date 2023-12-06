@@ -219,15 +219,6 @@ class Hexagon {
             .attr('cy', d => d.y)
             .attr('r', 3) // Set your desired radius
             .attr('fill', d => vis.colorMap[d.data.theme_name] ? vis.colorMap[d.data.theme_name] : 'white')
-
-            // {
-            //     if (vis.colorMap[d.data.theme_name]) {
-            //         return vis.colorMap[d.data.theme_name];
-            //     } else {
-            //         return 'white';
-            //     }
-            // }
-
             .attr('stroke', 'black')
             .attr('stroke-width', '0') // ! STATIC VISUALIZATION FOR M3
             .on('mouseover', function (event, d) {
