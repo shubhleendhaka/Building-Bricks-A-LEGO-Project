@@ -166,25 +166,87 @@ class HeatMap {
         vis.renderVis();
     }
 
+
+
     renderVis() {
         let vis = this;
 
+
+
+
+
         vis.chart.selectAll('.block')
             .data(vis.dataArray)
-            .join('rect')
-            .attr('x', d => { return vis.xScale(d.yearBinLabel); })
-            .attr('y', d => { return vis.yScale(d.pieceBinLabel); })
-            .attr('rx', 7) // Set the horizontal radius for rounded corners
-            .attr('ry', 7)
-            .attr('width', vis.xScale.bandwidth())
-            .attr('height', vis.yScale.bandwidth())
-            .style('fill', d => { return vis.colorScale(d.count); })
+            .join('g')
+            .each(function (d, i) {
+                let group = d3.select(this);
+
+                var defs = group.append("defs");
+
+
+                var dropShadowFilter = defs.append('svg:filter')
+                    .attr('id', 'drop-shadow')
+                    .attr('filterUnits', "userSpaceOnUse")
+                    .attr('width', '250%')
+                    .attr('height', '250%');
+
+                dropShadowFilter.append('svg:feGaussianBlur')
+                    .attr('in', 'SourceAlpha') // Use alpha channel of source graphic for blur
+                    .attr('stdDeviation', 2)
+                    .attr('result', 'blur-out');
+
+                dropShadowFilter.append('svg:feOffset')
+                    .attr('in', 'blur-out')
+                    .attr('dx', 3)
+                    .attr('dy', 3)
+                    .attr('result', 'offset-out');
+
+                dropShadowFilter.append('svg:feComponentTransfer')
+                    .attr('in', 'offset-out')
+                    .attr('result', 'shadow-out')
+                    .append('feFuncA')
+                    .attr('type', 'linear')
+                    .attr('slope', 0.2); // Adjust the alpha value (opacity) of the shadow
+
+                dropShadowFilter.append('svg:feBlend')
+                    .attr('in', 'SourceGraphic')
+                    .attr('in2', 'shadow-out')
+                    .attr('mode', 'normal');
+                group.append('rect')
+                    .attr('x', d => { return vis.xScale(d.yearBinLabel); })
+                    .attr('y', d => { return vis.yScale(d.pieceBinLabel); })
+                    .attr('width', vis.xScale.bandwidth())
+                    .attr('height', vis.yScale.bandwidth())
+                    .style('fill', d => { return vis.colorScale(d.count); });
+
+                let radius = vis.xScale.bandwidth() / 7;
+                let padding = radius;
+                for (let j = 0; j < 2; j++) {
+                    for (let k = 0; k < 2; k++) {
+                        group.append('circle')
+                            .attr('cx', vis.xScale(d.yearBinLabel) + 2 * padding + j * (radius * 2 + padding))
+                            .attr('cy', vis.yScale(d.pieceBinLabel) + 2 * padding + k * (radius * 2 + 2 * padding))
+                            .attr('r', radius)
+                            .style('fill', d => {
+                                console.log("Color Scale")
+                                console.log(d3.color(vis.colorScale(d.count)).formatHex());
+                                console.log(d3.rgb(vis.colorScale(d.count)).darker(1).formatHex())
+                                return vis.colorScale(d.count)
+                            })
+                            // .attr('stroke', 'grey')
+                            .attr('stroke', d => d3.rgb(vis.colorScale(d.count)).darker(1)) // Darken the fill color for the stroke
+                            .attr('stroke-width', 1.5)
+                            .style("filter", "url(#drop-shadow)"); // Apply the drop shadow filter
+
+                    }
+                }
+            })
             .on('mouseover', (event, d) => {
                 d3.select('#tooltip')
-                .style('display', 'flex')
-                .style('left', event.pageX + vis.config.tooltipPadding + 'px')
-                .style('top', event.pageY + vis.config.tooltipPadding + 'px')
-                .html(`
+                    .style('display', 'flex')
+                    .style('left', event.pageX + vis.config.tooltipPadding + 'px')
+                    .style('top', event.pageY + vis.config.tooltipPadding + 'px')
+                    .html(`
                 <div class="tooltip-title"><b>${d.count}</b> sets</div>
                 <div class="tooltip-subtitle">
                     Between <u>${d.yearBinLabel}</u> with <u>${d.pieceBinLabel}</u> pieces
@@ -194,7 +256,9 @@ class HeatMap {
             })
             .on('mouseleave', () => {
                 d3.select('#tooltip').style('display', 'none');
-            })
+            });
+
+
 
         // vis.chart.selectAll('.block-text')
         //     .data(vis.dataArray)

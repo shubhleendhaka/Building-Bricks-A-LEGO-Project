@@ -301,6 +301,7 @@ label {
 
 body {
     overflow: hidden;
+    font-family: 'Lato', sans-serif;
 }
 
 .lego-rect {
