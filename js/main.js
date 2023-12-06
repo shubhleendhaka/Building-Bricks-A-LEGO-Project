@@ -110,6 +110,7 @@ d3.csv("data/hexagon_data_with_coords.csv").then((data) => {
             }
             return true;
         });
+        console.log(filteredData);
 
         networkGraph.data = filteredData;
         networkGraph.updateData(filteredData);

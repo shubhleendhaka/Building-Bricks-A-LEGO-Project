@@ -59,9 +59,6 @@ class Hexagon {
             { color: '#bebada', label: 'Star Wars', angle: 60, offset: -15 }    // Purple
         ];
 
-        // #fdb462 - orange
-        // #80b1d3 - blue
-
         vis.colorMap = {
             'Books': '#fb8072',    // Red
             'Key Chain': '#80b1d3',           // Blue
@@ -161,7 +158,6 @@ class Hexagon {
     updateLines() {
         let vis = this;
         console.log("Updating lines");
-        console.log(vis.circleData)
 
         if (vis.clickedSet !== null) {
             vis.attachedPoints = vis.clickedSet.top_5_similar_sets;
@@ -174,8 +170,6 @@ class Hexagon {
                 if (point !== undefined) {
                     console.log("Found point", point);
                     console.log("Selected point", vis.selectedPointX, vis.selectedPointY);
-
-
 
                     vis.lineData.push({
                         source: { x: vis.selectedPointX, y: vis.selectedPointY },
@@ -204,7 +198,7 @@ class Hexagon {
             .attr('stroke', 'black')
             .attr('stroke-width', '0.5')
             .lower();
-        console.log("lines", lines)
+        // console.log("lines", lines)
         // Exit and remove unused lines
         lines.exit().remove();
     }
@@ -225,12 +219,21 @@ class Hexagon {
             .attr('cy', d => d.y)
             .attr('r', 3) // Set your desired radius
             .attr('fill', d => vis.colorMap[d.data.theme_name] ? vis.colorMap[d.data.theme_name] : 'white')
+
+            // {
+            //     if (vis.colorMap[d.data.theme_name]) {
+            //         return vis.colorMap[d.data.theme_name];
+            //     } else {
+            //         return 'white';
+            //     }
+            // }
+
             .attr('stroke', 'black')
             .attr('stroke-width', '0') // ! STATIC VISUALIZATION FOR M3
             .on('mouseover', function (event, d) {
                 if (!d3.select(this).classed('clicked')) {
                     vis.hoveredSet = d.data;
-                    // console.log("Hovered set", d)
+                    console.log("Hovered set", d)
                     d3.select(this).raise();
                     vis.updateStyle();
                     vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
@@ -265,9 +268,11 @@ class Hexagon {
 
             })
 
+        // Update circles
         circles
             .attr('cx', d => d.x)
-            .attr('cy', d => d.y);
+            .attr('cy', d => d.y)
+            .attr('fill', d => vis.colorMap[d.data.theme_name] ? vis.colorMap[d.data.theme_name] : 'white');
 
         circles.exit().remove();
 
