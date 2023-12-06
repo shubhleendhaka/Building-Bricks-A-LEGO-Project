@@ -131,6 +131,8 @@ d3.csv("data/hexagon_data_with_coords.csv").then((data) => {
                 networkGraph.updateVis();
                 dispatcher.call('cardData', event, [point, null]);
             } else {
+                networkGraph.clickedSet = null;
+                networkGraph.updateVis();
                 dispatcher.call('cardData', event, [null, null]);
             }
 
@@ -147,6 +149,8 @@ d3.csv("data/hexagon_data_with_coords.csv").then((data) => {
             networkGraph.updateVis();
             dispatcher.call('cardData', event, [point, null]);
         } else {
+            networkGraph.clickedSet = null;
+            networkGraph.updateVis();
             dispatcher.call('cardData', event, [null, null]);
         }
     });

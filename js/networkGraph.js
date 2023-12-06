@@ -139,8 +139,7 @@ class NetworkGraph {
         let vis = this;
         console.log("New data is ", vis.data.length, " items long ");
 
-        vis.updateLines();
-        vis.updateStyle();
+
         vis.renderVis();
     }
 
