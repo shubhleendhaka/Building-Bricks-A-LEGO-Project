@@ -5,10 +5,10 @@ class Cards {
             containerWidth: 600,
             containerHeight: 600,
             margin: {
-                top: 0,
-                right: 5,
-                bottom: 20,
-                left: 0
+                top: 10,
+                right: 10,
+                bottom: 10,
+                left: 10
             }
         };
         this.dispatcher = dispatcher;
@@ -22,7 +22,17 @@ class Cards {
     }
 
     initVis() {
-        this.updateVis()
+        let vis = this;
+        vis.colorMap = {
+            'Books': '#fb8072',    // Red
+            'Key Chain': '#fdb462',           // Orange
+            'Friends': '#ffe45e',           // Yellow
+            'Gear': '#8dd3c7',      // Green
+            'Ninjago': '#80b1d3',           // Blue
+            'Star Wars': '#bebada'          // Purple
+        };
+        vis.updateVis()
+
 
     }
     updateVis() {
@@ -46,17 +56,18 @@ class Cards {
             if (vis.cardData[i] !== null) {
 
                 let currentCard = vis.cardData[i];
+                console.log(currentCard);
 
 
                 cardsHTML += `
-                <div class="selected-card">
+                <div class="selected-card" style="--selected-card-color: ${vis.colorMap[currentCard.theme_name]};">
                     <h2 class="card-title">${currentCard.set_name}</h2>
                     <div class="card-content">
-                    <img class="card-image" src=${currentCard.set_img_url} /> 
+                        <img class="card-image" src=${currentCard.set_img_url} /> 
                         <div class="card-info-titles">
-                            <h4>Year:</h4>
-                            <h4>Theme:</h4>
-                            <h4>Pieces:</h4>
+                            <h4>Year</h4>
+                            <h4>Theme</h4>
+                            <h4>Pieces</h4>
                         </div>
                         <div class="card-info">
                             <h5>${currentCard.set_year}</h5>
@@ -64,7 +75,6 @@ class Cards {
                             <h5>${currentCard.num_parts}</h5>
                         </div>
                     </div>
-                </div>
                 </div>
             `
 

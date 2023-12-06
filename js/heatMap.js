@@ -2,8 +2,8 @@ class HeatMap {
     constructor(_config, _data) {
         this.config = {
             parentElement: _config.parentElement,
-            containerWidth: 750,
-            containerHeight: 600,
+            containerWidth: 600,
+            containerHeight: 500,
             legendHeight: 20,
             margin: {
                 top: 30,
@@ -21,7 +21,7 @@ class HeatMap {
         let vis = this;
 
         vis.colorScale = d3.scaleSequential()
-            .interpolator(d3.interpolateRgbBasis(["#e98d6b", "#e3685c", "#d14a61", "#b13c6c", "#8f3371", "#6c2b6d"]))
+            .interpolator(d3.interpolateRgbBasis(["#FFBE0B", "#FB5607", "#FF006E", "#8338EC"]))
 
 
         vis.data = this.data.filter(d => d.num_parts > 0);
@@ -54,10 +54,9 @@ class HeatMap {
             .paddingInner(0.01)
             .paddingOuter(0.01);
 
-        vis.xAxis = d3.axisBottom(vis.xScale).tickValues(vis.yearBins);
+        vis.xAxis = d3.axisBottom(vis.xScale).tickValues(vis.yearBins).tickSize(0);
 
         vis.yAxis = d3.axisLeft(vis.yScale).tickValues(vis.pieceBins).tickSize(0);
-
 
 
         vis.svg = vis.config.parentElement.append('svg')
@@ -81,9 +80,14 @@ class HeatMap {
         // draw axis
         vis.xAxisGroup = vis.chartArea.append('g')
             .attr('class', 'axis x-axis')
-            .attr('transform', `translate(${0},${vis.config.height})`)
+            .attr('transform', `translate(${0},${vis.config.height + 10})`)
             .call(vis.xAxis);
 
+        vis.xAxisGroup.selectAll("text")
+            .attr("transform", "rotate(-45)")
+            .style("text-anchor", "end")
+            .attr("dx", ".5em") // Adjust this value as needed
+            .attr("dy", ".5em");
         vis.xAxisGroup.append('text')
             .attr('class', 'axis text')
             .style('fill', 'black')
@@ -92,8 +96,8 @@ class HeatMap {
             .attr('x', vis.config.width / 2)
             .attr('y', 28)
             .attr('fill-opacity', 1)
-            .text("Year")
-            .attr("transform", "translate(0, 10)");
+            .text("Number of Sets")
+            .attr("transform", "translate(0, 28)");
 
         vis.yAxisGroup = vis.chartArea.append('g')
             .attr('class', 'axis y-axis')
@@ -102,6 +106,10 @@ class HeatMap {
         vis.yAxisGroup.selectAll(".tick text")
             .attr("transform", "rotate(-90), translate(20, -14)")
             .style("text-anchor", "end");
+
+        vis.yAxisGroup.select(".domain").remove();
+        vis.xAxisGroup.select(".domain").remove();
+
 
         vis.svg.append('text')
             .attr('class', 'axis text')
@@ -165,10 +173,14 @@ class HeatMap {
             .join('rect')
             .attr('x', d => { return vis.xScale(d.yearBinLabel); })
             .attr('y', d => { return vis.yScale(d.pieceBinLabel); })
+            .attr('rx', 7) // Set the horizontal radius for rounded corners
+            .attr('ry', 7)
             .attr('width', vis.xScale.bandwidth())
             .attr('height', vis.yScale.bandwidth())
             .style('fill', d => { return vis.colorScale(d.count); })
 
+
+        // remove yAxis line
 
 
         vis.chart.selectAll('.block-text')
@@ -205,7 +217,7 @@ class HeatMap {
         vis.chart.append("rect")
             .attr('width', vis.config.width)
             .attr('height', vis.config.legendHeight)
-            .attr("transform", `translate(0, ${vis.config.height + vis.config.legendHeight + vis.config.margin.bottom + 15})`)
+            .attr("transform", `translate(0, ${vis.config.height + vis.config.legendHeight + vis.config.margin.bottom + 20})`)
             .attr('fill', "url(#linear-gradient)");
 
         let axisScale = d3.scaleLinear()
@@ -215,16 +227,19 @@ class HeatMap {
         let xAxis = d3.axisBottom(axisScale).tickValues(d3.range(0, 2501, 500));
         let xAxisGroup = vis.chartArea.append('g')
             .attr('class', 'axis x-axis')
-            .attr('transform', `translate(${0},${vis.config.height + vis.config.legendHeight * 2 + vis.config.margin.bottom + 16} )`)
+            .attr('transform', `translate(${0},${vis.config.height + vis.config.legendHeight * 2 + vis.config.margin.bottom + 20} )`)
             .call(xAxis);
 
-        xAxisGroup.append('text')
-            .style('fill', 'black')
-            .style('font-size', '14px')
-            .attr('text-anchor', 'middle')
-            .attr('x', vis.config.width / 2)
-            .attr('y', -25)
-            .attr('fill-opacity', 1)
-            .text("Number of sets");
+
+        // remove domain line
+        xAxisGroup.select(".domain").remove();
+        // xAxisGroup.append('text')
+        //     .style('fill', 'black')
+        //     .style('font-size', '14px')
+        //     .attr('text-anchor', 'middle')
+        //     .attr('x', vis.config.width / 2)
+        //     .attr('y', -10)
+        //     .attr('fill-opacity', 1)
+        //     .text("Number of sets");
     }
 }
