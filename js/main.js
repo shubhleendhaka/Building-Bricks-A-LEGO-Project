@@ -55,9 +55,9 @@ d3.csv("data/hexagon_data_with_coords.csv").then((data) => {
         data
     );
 
-    const networkGraph = new Hexagon(
+    const networkGraph = new NetworkGraph(
         {
-            parentElement: d3.select("#hexagon-container"),
+            parentElement: d3.select("#network-graph-container"),
         },
         dispatcher,
         data
