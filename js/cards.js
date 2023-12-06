@@ -25,11 +25,11 @@ class Cards {
         let vis = this;
         vis.colorMap = {
             'Books': { color: '#fb8072', font: 'white' },      // Red
-            'Key Chain': { color: '#80b1d3', font: 'white' },   // Orange
+            'Key Chain': { color: '#80b1d3', font: 'white' },   // Blue
             'Friends': { color: '#ffe45e', font: 'black' },    // Yellow
             'Gear': { color: '#8dd3c7', font: 'black' },       // Green
-            'Ninjago': { color: '#fdb462', font: 'white' },     // Blue
-            'Star Wars': { color: '#bebada', font: 'white' }    // Purple
+            'Ninjago': { color: '#fdb462', font: 'black' },     // Otange
+            'Star Wars': { color: '#bebada', font: 'black' }    // Purple
         };
 
         vis.updateVis()
