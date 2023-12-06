@@ -86,13 +86,13 @@ class NetworkGraph {
             .merge(labels)
             .attr('class', 'edge-label')
             .attr('x', (d, i) => {
-                const midX = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].x 
-                              + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].x) / 2;
+                const midX = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].x
+                    + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].x) / 2;
                 return midX + d.offset + (d.xOffset || 0); // Add the xOffset here
             })
             .attr('y', (d, i) => {
-                const midY = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].y 
-                              + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].y) / 2;
+                const midY = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].y
+                    + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].y) / 2;
                 return midY + d.offset + (d.yOffset || 0); // Add the yOffset here
             })
             .attr('fill', d => d.color)
@@ -101,12 +101,12 @@ class NetworkGraph {
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'middle')
             .attr('transform', (d, i) => {
-                let x = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].x 
-                         + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].x) / 2 
-                         + (d.xOffset || 0); // Apply xOffset here as well
-                let y = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].y 
-                         + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].y) / 2 
-                         + (d.yOffset || 0); // Apply yOffset here as well
+                let x = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].x
+                    + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].x) / 2
+                    + (d.xOffset || 0); // Apply xOffset here as well
+                let y = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].y
+                    + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].y) / 2
+                    + (d.yOffset || 0); // Apply yOffset here as well
                 return `rotate(${d.angle},${x},${y})`; // Adjusted rotation application
             });
 
@@ -163,6 +163,12 @@ class NetworkGraph {
                 if (vis.hoveredSet !== null && vis.hoveredSet.set_num === d.setNum) {
                     return '2, 1';
                 } else return 'none'
+            })
+            .attr('fill', d => {
+                if (vis.clickedSet && d.setNum === vis.clickedSet.set_num) {
+                    return 'black';
+                } else return (
+                    vis.colorMap[d.data.theme_name] ? vis.colorMap[d.data.theme_name] : 'white')
             });
     }
 
@@ -255,6 +261,8 @@ class NetworkGraph {
                     vis.hoveredSet = d.data;
                     vis.attachedPoints = [];
                     vis.lineData = [];
+                    // change color of clicked circle
+
 
                 } else {
                     vis.clickedSet = d.data;
@@ -274,7 +282,12 @@ class NetworkGraph {
         circles
             .attr('cx', d => d.x)
             .attr('cy', d => d.y)
-            .attr('fill', d => vis.colorMap[d.data.theme_name] ? vis.colorMap[d.data.theme_name] : 'white');
+            .attr('fill', d => {
+                if (vis.clickedSet && d.setNum === vis.clickedSet.set_num) {
+                    return 'black';
+                } else return (
+                    vis.colorMap[d.data.theme_name] ? vis.colorMap[d.data.theme_name] : 'white')
+            });
 
         circles.exit().remove();
 
