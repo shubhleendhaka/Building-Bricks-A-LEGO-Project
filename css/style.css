@@ -299,6 +299,9 @@ label {
 }
 
 
+body {
+    overflow: hidden;
+}
 
 .lego-rect {
     cursor: pointer;
