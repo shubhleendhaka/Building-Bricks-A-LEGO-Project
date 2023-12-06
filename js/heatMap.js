@@ -3,7 +3,7 @@ class HeatMap {
         this.config = {
             parentElement: _config.parentElement,
             containerWidth: 600,
-            containerHeight: 500,
+            containerHeight: 460,
             tooltipPadding: 15,
             legendHeight: 20,
             margin: {
@@ -71,8 +71,8 @@ class HeatMap {
             .attr('x', vis.config.containerWidth / 2 + vis.config.margin.left)
             .attr('y', 20)
             .attr('fill-opacity', 1)
-            .text("Sets by Number of Pieces and Year");
-
+            .text("Sets by Number of Pieces and Year")
+            .style("font-weight", "bold");
         vis.chartArea = vis.svg.append('g')
             .attr('transform', `translate(${vis.config.margin.left * 2},${vis.config.margin.top})`);
 
@@ -225,7 +225,7 @@ class HeatMap {
                     for (let k = 0; k < 2; k++) {
                         group.append('circle')
                             .attr('cx', vis.xScale(d.yearBinLabel) + 2 * padding + j * (radius * 2 + padding))
-                            .attr('cy', vis.yScale(d.pieceBinLabel) + 2 * padding + k * (radius * 2 + 2 * padding))
+                            .attr('cy', vis.yScale(d.pieceBinLabel) + 2 * padding + k * (radius * 2 + padding))
                             .attr('r', radius)
                             .style('fill', d => {
                                 console.log("Color Scale")
