@@ -23,11 +23,13 @@ class Cards {
 
     initVis() {
         let vis = this;
+
+        // Mapping theme to hex colour and font colour
         vis.colorMap = {
-            'Books': { color: '#fb8072', font: 'white' },      // Red
+            'Books': { color: '#fb8072', font: 'white' },       // Red
             'Key Chain': { color: '#80b1d3', font: 'white' },   // Blue
-            'Friends': { color: '#ffe45e', font: 'black' },    // Yellow
-            'Gear': { color: '#8dd3c7', font: 'black' },       // Green
+            'Friends': { color: '#ffe45e', font: 'black' },     // Yellow
+            'Gear': { color: '#8dd3c7', font: 'black' },        // Green
             'Ninjago': { color: '#fdb462', font: 'black' },     // Otange
             'Star Wars': { color: '#bebada', font: 'black' }    // Purple
         };
@@ -38,13 +40,6 @@ class Cards {
     }
     updateVis() {
         const vis = this;
-
-
-        //     FROM VIS.data only get items where the set_num is in vis.cardData
-
-        //     console.log(vis.filteredCards);
-
-
         this.renderVis()
     }
 
@@ -57,7 +52,6 @@ class Cards {
             if (vis.cardData[i] !== null) {
 
                 let currentCard = vis.cardData[i];
-                console.log(currentCard);
                 let transformation = ''
                 let translateText = ''
                 let translateCard = ''
@@ -69,12 +63,12 @@ class Cards {
 
                 let fontColor = vis.colorMap[currentCard.theme_name].font;
                 let cardColor = vis.colorMap[currentCard.theme_name].color;
-                console.log("Font Color", fontColor)
                 let title = currentCard.set_name;
                 if (title.length > 47) {
                     title = title.substring(0, 44) + '...';
                 }
 
+                // What to display on the card
                 cardsHTML += `
                     <div class="selected-card" style="--selected-card-color: ${cardColor};${transformation}${translateCard}">
                         <div class="card-content" style="${transformation}${translateText} color:${fontColor}">
@@ -100,6 +94,3 @@ class Cards {
         vis.config.parentElement.html(cardsHTML);
     }
 }
-
-// Instantiate Cards
-

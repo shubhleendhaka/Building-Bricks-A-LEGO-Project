@@ -1,157 +1,44 @@
-/* style.css */
+/* General Layout */
 .three-column-layout {
     display: flex;
     justify-content: space-between;
-    /* This will space out your columns */
     align-items: flex-start;
-    /* This aligns items to the top of the container */
 }
 
 #left-column {
     flex: 1;
-    /* Assigns a flex ratio */
     order: 1;
-    /* Ensures this column is first */
-    /* Additional styling */
 }
 
 #center-column {
     flex: 2;
-    /* Takes twice as much space as the other columns */
     order: 2;
-    /* Ensures this column is second */
-    /* Additional styling */
 }
 
 #right-column {
     flex: 1;
-    /* Assigns a flex ratio */
     order: 3;
-    /* Ensures this column is last */
-    /* Additional styling */
-}
-
-.page-header {
-    text-align: left;
-    margin: 0;
-    min-height: 55px;
-    padding: 8px;
-    background-image: url('../data/bricks.png');
-    /* Path to your background image */
-    /* background-repeat: repeat; Ensures the image repeats to fill the space */
-    /* background-size: 300px 300px; */
-    /* Adjust the size as needed to create a repeating pattern */
-    /* Additional styling as needed */
 }
 
 .page-header h1 {
     margin: 0;
     padding: 0;
     font-size: 1.4em;
-    /* Adjust font size if necessary */
     line-height: 1.2;
     display: flex;
-    /* Use flexbox to align text and image inline */
     align-items: center;
-    /* Center align the items vertically */
 }
 
 .lego-logo {
-    /* Adjust the size of the logo as needed */
     height: 3.5em;
-    /* Makes the logo's height match the surrounding text size */
     width: auto;
-    /* Maintain the aspect ratio of the logo */
     padding: 0 0.2em;
-    /* Optional: add some space around the logo */
 }
-
-
 
 /* Hexagon */
 .circle:hover {
     stroke-width: 1;
 }
-
-/* Selection Cards */
-/* .selection-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.selected-card {
-    width: 30rem;
-    height: 14rem;
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-    border: 2px solid black;
-    border-radius: 5px;
-    justify-content: space-around;
-}
-
-.hovered-card {
-    width: 30rem;
-    height: 14rem;
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-    border: 2px solid black;
-    border-radius: 5px;
-    justify-content: space-around;
-}
-
-.card-title {
-    margin: 0.5rem 0 0.5rem 0;
-    text-align: center;
-    text-decoration: underline;
-    margin: 0;
-}
-
-.card-content {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-.card-image {
-    height: 10rem;
-    border: 0.25rem solid black;
-    border-radius: 5px;
-    flex: 3;
-}
-
-.card-info-titles {
-    height: 10rem;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    margin: 0 0 0 0.5rem;
-}
-
-.card-info-titles h4 {
-    font-size: 1.25rem;
-    font-weight: bold;
-    margin: 0;
-}
-
-.card-info {
-    height: 10rem;
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-}
-
-.card-info h5 {
-    margin: 0;
-
-    font-weight: 200;
-} */
 
 /* Search + Pick for Me */
 #parent-search-container {
@@ -181,19 +68,8 @@ label {
 #pick-random {
     width: 100%;
     padding: 0;
-    margin: 0.5rem 0 0 0;
+    margin: 0.5rem 0 0 0
 }
-
-/* .selected-card {
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    max-width: 200px;
-    margin: 20px;
-    align-items: center;
-    transition: transform 0.3s ease-in-out;
-} */
 
 .selected-card {
     position: relative;
@@ -240,7 +116,6 @@ label {
     padding: 5px;
     font-size: 18px;
     margin: 0;
-    /* color: white; */
 }
 
 .card-content {
@@ -254,13 +129,11 @@ label {
 }
 
 .card-image {
-    /* width: 100%; */
     height: 100%;
     max-height: 120px;
     max-width: 170px;
     border-bottom: 1px solid #ccc;
     margin: 0 auto;
-    /* Center the image horizontally */
 }
 
 .card-info-titles,
@@ -350,8 +223,3 @@ button {
     color: #000;
     font-size: 16px;
 }
-
-/* #tooltip ul {
-    margin: 5px 0 0 0;
-    padding-left: 20px;
-  } */

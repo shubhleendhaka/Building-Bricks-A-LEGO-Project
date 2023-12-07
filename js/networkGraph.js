@@ -59,15 +59,17 @@ class NetworkGraph {
             { color: '#bebada', label: 'Star Wars', angle: 60, offset: -15, xOffset: 10, yOffset: 15 }    // Purple
         ];
 
+        // Map theme to hex
         vis.colorMap = {
-            'Books': '#fb8072',    // Red
-            'Key Chain': '#80b1d3',           // Blue
+            'Books': '#fb8072',             // Red
+            'Key Chain': '#80b1d3',         // Blue
             'Friends': '#ffe246',           // Yellow
-            'Gear': '#8dd3c7',      // Green
+            'Gear': '#8dd3c7',              // Green
             'Ninjago': '#fdb462',           // Orange
             'Star Wars': '#bebada'          // Purple
         };
 
+        // Draw hexagon edges
         vis.svg.selectAll('.edge')
             .data(vis.hexagonData)
             .enter().append('line')
@@ -80,21 +82,23 @@ class NetworkGraph {
             .attr('stroke-width', '10')
             .attr('stroke-linecap', 'round');
 
+        // Draw hexagon edge labels
         let labels = vis.svg.selectAll('.edge-label')
             .data(vis.hexagonData);
 
+        // Adjust the labels to correct positions for each edge
         labels.enter().append('text')
             .merge(labels)
             .attr('class', 'edge-label')
             .attr('x', (d, i) => {
                 const midX = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].x
                     + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].x) / 2;
-                return midX + d.offset + (d.xOffset || 0); // Add the xOffset here
+                return midX + d.offset + (d.xOffset || 0); 
             })
             .attr('y', (d, i) => {
                 const midY = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].y
                     + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].y) / 2;
-                return midY + d.offset + (d.yOffset || 0); // Add the yOffset here
+                return midY + d.offset + (d.yOffset || 0);
             })
             .attr('fill', d => d.color)
             .text(d => d.label)
@@ -104,15 +108,14 @@ class NetworkGraph {
             .attr('transform', (d, i) => {
                 let x = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].x
                     + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].x) / 2
-                    + (d.xOffset || 0); // Apply xOffset here as well
+                    + (d.xOffset || 0); 
                 let y = (vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[i].y
                     + vis.hexagonPoints(vis.centerX, vis.centerY, vis.hexRadius)[(i + 1) % vis.hexagonData.length].y) / 2
-                    + (d.yOffset || 0); // Apply yOffset here as well
-                return `rotate(${d.angle},${x},${y})`; // Adjusted rotation application
+                    + (d.yOffset || 0); 
+                return `rotate(${d.angle},${x},${y})`;
             });
 
         vis.updateData(vis.data);
-        // vis.updateLines();
     }
 
     updateData(data) {
@@ -123,23 +126,17 @@ class NetworkGraph {
         vis.attachedPoints = [];
         vis.lineData = [];
 
-        let centerX = vis.config.containerWidth / 2;
-        let centerY = vis.config.containerHeight / 2;
-
         // Push initial data for each point -> Each point should initialize in center of hexagon before forces move them around
         vis.data.forEach(d => {
             vis.circleData.push({ x: d.x, y: d.y, setNum: d.set_num, data: d })
         });
 
         vis.updateVis();
-
     }
 
     updateVis() {
         // Update visualization if needed
         let vis = this;
-        console.log("New data is ", vis.data.length, " items long ");
-
 
         vis.renderVis();
     }
@@ -174,7 +171,6 @@ class NetworkGraph {
 
     updateLines() {
         let vis = this;
-        console.log("Updating lines");
 
         if (vis.clickedSet !== null) {
             vis.attachedPoints = vis.clickedSet.top_5_similar_sets;
@@ -185,9 +181,6 @@ class NetworkGraph {
                 let point = vis.circleData.filter(d => d.setNum === pointId);
                 point = point[0];
                 if (point !== undefined) {
-                    console.log("Found point", point);
-                    console.log("Selected point", vis.selectedPointX, vis.selectedPointY);
-
                     vis.lineData.push({
                         source: { x: vis.selectedPointX, y: vis.selectedPointY },
                         target: { x: point.x, y: point.y }
@@ -200,8 +193,7 @@ class NetworkGraph {
             vis.lineData = [];
         }
 
-        console.log(vis.lineData);
-
+        // Draw lines between points
         let lines = vis.svg.selectAll('.connector')
             .data(vis.lineData);
 
@@ -215,17 +207,17 @@ class NetworkGraph {
             .attr('stroke', 'black')
             .attr('stroke-width', '0.5')
             .lower();
-        // console.log("lines", lines)
+
         // Exit and remove unused lines
         lines.exit().remove();
     }
 
-
     renderVis() {
         // Render visualization if needed
-        console.log("do be rendering")
         let vis = this;
 
+        // Draw the points for each set
+            // Notice cx and cy are taken from data -- No longer computed by force simulation
         let circles = vis.svg.selectAll('.circle')
             .data(vis.circleData);
 
@@ -237,11 +229,10 @@ class NetworkGraph {
             .attr('r', 3) // Set your desired radius
             .attr('fill', d => vis.colorMap[d.data.theme_name] ? vis.colorMap[d.data.theme_name] : 'white')
             .attr('stroke', 'black')
-            .attr('stroke-width', '0') // ! STATIC VISUALIZATION FOR M3
+            .attr('stroke-width', '0') 
             .on('mouseover', function (event, d) {
                 if (vis.clickedSet === null || vis.clickedSet.set_num !== d.setNum) {
                     vis.hoveredSet = d.data;
-                    console.log("Hovered set", d)
                     d3.select(this).raise();
                     vis.updateStyle();
                     vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
@@ -262,15 +253,11 @@ class NetworkGraph {
                     vis.attachedPoints = [];
                     vis.lineData = [];
 
-                    // change color of clicked circle
-
-
                 } else {
                     vis.clickedSet = d.data;
                     vis.hoveredSet = null;
                     vis.selectedPointX = d.x;
                     vis.selectedPointY = d.y;
-                    console.log("Clicked set", d)
                 }
                 vis.dispatcher.call('cardData', event, [vis.clickedSet, vis.hoveredSet]);
 
@@ -279,7 +266,6 @@ class NetworkGraph {
 
 
             })
-
 
         // Update circles
         circles
@@ -292,6 +278,7 @@ class NetworkGraph {
                     vis.colorMap[d.data.theme_name] ? vis.colorMap[d.data.theme_name] : 'white')
             });
 
+        // Exit and remove unused circles
         circles.exit().remove();
 
         vis.updateLines();

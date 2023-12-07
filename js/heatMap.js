@@ -24,7 +24,6 @@ class HeatMap {
         vis.colorScale = d3.scaleSequential()
             .interpolator(d3.interpolateRgbBasis(["#FFBE0B", "#FB5607", "#FF006E", "#8338EC"]))
 
-
         vis.data = this.data.filter(d => d.num_parts > 0);
 
         vis.data.forEach(d => {
@@ -32,12 +31,9 @@ class HeatMap {
             d.yearBinLabel = vis.getYearBinLabel(d.year);
         });
 
-
-
         // Set up SVG container
         vis.config.width = vis.config.containerWidth - vis.config.margin.left * 2 - vis.config.margin.right;
         vis.config.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom * 3 - vis.config.legendHeight;
-
 
         vis.pieceBins = ["1-50", "51-100", "101-150", "151-200", "200+"];
         vis.yearBins = ["1949-1959", "1960-1969", "1970-1979", "1980-1989", "1990-1999", "2000-2009", "2010-2019", "2020-2024"];
@@ -45,8 +41,8 @@ class HeatMap {
         vis.xScale = d3.scaleBand()
             .domain(vis.yearBins)
             .range([0, vis.config.width])
-            .paddingInner(0.01) // Adjust the padding as needed
-            .paddingOuter(0.01); // Adjust the padding as needed
+            .paddingInner(0.01)
+            .paddingOuter(0.01);
 
 
         vis.yScale = d3.scaleBand()
@@ -59,11 +55,11 @@ class HeatMap {
 
         vis.yAxis = d3.axisLeft(vis.yScale).tickValues(vis.pieceBins).tickSize(0);
 
-
         vis.svg = vis.config.parentElement.append('svg')
             .attr('width', vis.config.containerWidth)
             .attr('height', vis.config.containerHeight);
 
+        // Heatmap title
         vis.svg.append("text")
             .style('fill', 'black')
             .style('font-size', '18px')
@@ -78,17 +74,20 @@ class HeatMap {
 
         vis.chart = vis.chartArea.append('g')
 
-        // draw axis
+        // Draw x-axis
         vis.xAxisGroup = vis.chartArea.append('g')
             .attr('class', 'axis x-axis')
             .attr('transform', `translate(${0},${vis.config.height + 10})`)
             .call(vis.xAxis);
 
+        // Rotate x-axis labels
         vis.xAxisGroup.selectAll("text")
             .attr("transform", "rotate(-45)")
             .style("text-anchor", "end")
-            .attr("dx", ".5em") // Adjust this value as needed
+            .attr("dx", ".5em")
             .attr("dy", ".5em");
+
+        // Colour spectrum title
         vis.xAxisGroup.append('text')
             .attr('class', 'axis text')
             .style('fill', 'black')
@@ -100,10 +99,12 @@ class HeatMap {
             .text("Number of Sets")
             .attr("transform", "translate(0, 28)");
 
+        // Draw y-axis
         vis.yAxisGroup = vis.chartArea.append('g')
             .attr('class', 'axis y-axis')
             .call(vis.yAxis);
 
+        // Rotate y-axis labels
         vis.yAxisGroup.selectAll(".tick text")
             .attr("transform", "rotate(-90), translate(20, -14)")
             .style("text-anchor", "end");
@@ -111,12 +112,12 @@ class HeatMap {
         vis.yAxisGroup.select(".domain").remove();
         vis.xAxisGroup.select(".domain").remove();
 
-
+        // Rotate y-axis title
         vis.svg.append('text')
             .attr('class', 'axis text')
             .style('fill', 'black')
             .style('font-size', '14px')
-            .style('line-height', '20px') // Increase line height
+            .style('line-height', '20px')
             .attr('text-anchor', 'middle')
             .attr('x', -vis.config.height / 2 - vis.config.margin.top)
             .attr('y', vis.config.margin.left + 10)
@@ -126,6 +127,7 @@ class HeatMap {
 
         vis.updateVis();
     }
+
     getPieceBinLabel(value) {
         if (value <= 50) return "1-50";
         else if (value <= 100) return "51-100";
@@ -144,12 +146,13 @@ class HeatMap {
         else if (value <= 2019) return "2010-2019";
         else return "2020-2024";
     }
+
     updateVis() {
         let vis = this;
 
         const aggregatedData = d3.rollup(
             vis.data,
-            v => v.length, // Count the occurrences for each group
+            v => v.length,
             d => d.yearBinLabel,
             d => d.pieceBinLabel
         );
@@ -158,8 +161,6 @@ class HeatMap {
             Array.from(values, ([pieceBinLabel, count]) => ({ yearBinLabel, pieceBinLabel, count }))
         ).flat();
 
-
-
         vis.blockRange = vis.dataArray.map(d => d.count);
 
         vis.colorScale.domain([Math.min(...vis.blockRange), Math.max(...vis.blockRange)])
@@ -167,15 +168,11 @@ class HeatMap {
         vis.renderVis();
     }
 
-
-
+    
     renderVis() {
         let vis = this;
 
-
-
-
-
+        // Draw the blocks of the heatmap
         vis.chart.selectAll('.block')
             .data(vis.dataArray)
             .join('g')
@@ -184,7 +181,6 @@ class HeatMap {
 
                 var defs = group.append("defs");
 
-
                 var dropShadowFilter = defs.append('svg:filter')
                     .attr('id', 'drop-shadow')
                     .attr('filterUnits', "userSpaceOnUse")
@@ -192,7 +188,7 @@ class HeatMap {
                     .attr('height', '250%');
 
                 dropShadowFilter.append('svg:feGaussianBlur')
-                    .attr('in', 'SourceAlpha') // Use alpha channel of source graphic for blur
+                    .attr('in', 'SourceAlpha')
                     .attr('stdDeviation', 2)
                     .attr('result', 'blur-out');
 
@@ -207,12 +203,13 @@ class HeatMap {
                     .attr('result', 'shadow-out')
                     .append('feFuncA')
                     .attr('type', 'linear')
-                    .attr('slope', 0.2); // Adjust the alpha value (opacity) of the shadow
+                    .attr('slope', 0.2); 
 
                 dropShadowFilter.append('svg:feBlend')
                     .attr('in', 'SourceGraphic')
                     .attr('in2', 'shadow-out')
                     .attr('mode', 'normal');
+
                 group.append('rect')
                     .attr('x', d => { return vis.xScale(d.yearBinLabel); })
                     .attr('y', d => { return vis.yScale(d.pieceBinLabel); })
@@ -229,19 +226,16 @@ class HeatMap {
                             .attr('cy', vis.yScale(d.pieceBinLabel) + 2 * padding + k * (radius * 2 + padding))
                             .attr('r', radius)
                             .style('fill', d => {
-                                console.log("Color Scale")
-                                console.log(d3.color(vis.colorScale(d.count)).formatHex());
-                                console.log(d3.rgb(vis.colorScale(d.count)).darker(1).formatHex())
                                 return vis.colorScale(d.count)
                             })
-                            // .attr('stroke', 'grey')
-                            .attr('stroke', d => d3.rgb(vis.colorScale(d.count)).darker(1)) // Darken the fill color for the stroke
+                            .attr('stroke', d => d3.rgb(vis.colorScale(d.count)).darker(1)) 
                             .attr('stroke-width', 1.5)
-                            .style("filter", "url(#drop-shadow)"); // Apply the drop shadow filter
+                            .style("filter", "url(#drop-shadow)"); 
 
                     }
                 }
             })
+            // Tooltip for heatmap
             .on('mouseover', (event, d) => {
                 d3.select('#tooltip')
                     .style('display', 'flex')
@@ -258,22 +252,6 @@ class HeatMap {
             .on('mouseleave', () => {
                 d3.select('#tooltip').style('display', 'none');
             });
-
-
-
-        // vis.chart.selectAll('.block-text')
-        //     .data(vis.dataArray)
-        //     .join('text')
-        //     .attr('x', d => { return vis.xScale(d.yearBinLabel) + vis.xScale.bandwidth() / 2; })
-        //     .attr('y', d => { return vis.yScale(d.pieceBinLabel) + vis.yScale.bandwidth() / 2; })
-        //     .attr('text-anchor', 'middle')
-        //     .style('fill', d => {
-        //         const blockColor = vis.colorScale(d.count);
-        //         const textColor = d3.lab(blockColor).l <= d3.lab("#e3685c").l ? "white" : "black";
-        //         return textColor;
-        //     })
-        //     .attr('dominant-baseline', 'central')
-        //     .text(d => d.count);
 
         vis.renderLegend();
     }
@@ -311,13 +289,5 @@ class HeatMap {
 
         // remove domain line
         xAxisGroup.select(".domain").remove();
-        // xAxisGroup.append('text')
-        //     .style('fill', 'black')
-        //     .style('font-size', '14px')
-        //     .attr('text-anchor', 'middle')
-        //     .attr('x', vis.config.width / 2)
-        //     .attr('y', -10)
-        //     .attr('fill-opacity', 1)
-        //     .text("Number of sets");
     }
 }

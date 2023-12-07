@@ -3,21 +3,18 @@ d3.csv("data/hexagon_data_with_coords.csv").then((data) => {
     // Make a set of all the themes that are in the data
     const themes = new Set();
 
-
-
     data.forEach((d) => {
-        // d.top_5_similar_sets = JSON.parse(d.top_5_similar_sets);
         themes.add(d.theme_name);
 
         let csvString = d.top_5_similar_sets;
 
-        // Remove square brackets and single quotes, then split by commas
+        // Remove square brackets and single quotes -> Split by commas
         const values = csvString.replace(/[\[\]']+/g, '').split(', ');
 
-        // Convert the array elements to JSON format
+        // Convert the array elements to JSON
         const jsonArrayString = JSON.stringify(values);
 
-        // Parse the JSON array string into an actual JavaScript array
+        // Parse JSON array str. into JS array
         const jsonArray = JSON.parse(jsonArrayString);
 
         d.top_5_similar_sets = jsonArray;
@@ -30,18 +27,12 @@ d3.csv("data/hexagon_data_with_coords.csv").then((data) => {
         });
     });
 
-    // Extract the RGB color column names
+    // Extract RGB color column names
     const rgbColumns = data.columns.filter(column => column.match(/[0-9A-Fa-f]{6}/));
 
-    // Transform the column names into the expected format for ColorChart
+    // Transform column names into format for ColorChart
     const colorData = rgbColumns.map(color => ({ rgb: color }));
 
-    console.log("Color Data", colorData);
-
-
-
-
-    console.log("Themes are ", themes);
     const dispatcher = d3.dispatch(
         "cardData",
         "selectedColors"
@@ -69,13 +60,12 @@ d3.csv("data/hexagon_data_with_coords.csv").then((data) => {
             parentElement: d3.select("#color-chart-container"),
         },
         dispatcher,
-        colorData // Use the transformed color data here
+        colorData
     );
 
+    // Dispatcher for card data
     dispatcher.on("cardData", (cardData) => {
         cards.cardData = cardData;
-
-
         cards.updateVis();
 
         let activeColors = new Set();
@@ -90,22 +80,19 @@ d3.csv("data/hexagon_data_with_coords.csv").then((data) => {
 
             }
         }
+
         colorChart.activeColors = activeColors;
         colorChart.updateChart(colorData);
-
-
-
     });
 
-
-
+    // Dispatcher for selected colours
     dispatcher.on("selectedColors", (selectedColors) => {
         colorChart.selectedColors = selectedColors;
         colorChart.activeColors = new Set();
         colorChart.updateChart(colorData);
 
         let filteredData = data.filter(point => {
-            // Check if the value for each of the selected colors is 1
+            // Check if each selected colour == 1
             for (let color of selectedColors) {
                 if (point[color] !== 1) {
                     return false;
@@ -113,14 +100,12 @@ d3.csv("data/hexagon_data_with_coords.csv").then((data) => {
             }
             return true;
         });
-        console.log(filteredData);
 
         networkGraph.data = filteredData;
         networkGraph.updateData(filteredData);
-
-
     });
 
+    // Search widget listener
     d3.select("#search-input").on("keypress", (event) => {
         if (event.key === "Enter") {
 
@@ -136,9 +121,7 @@ d3.csv("data/hexagon_data_with_coords.csv").then((data) => {
                 dispatcher.call('cardData', event, [null, null]);
             }
 
-
             d3.select("#search-input").node().value = "";
-
         }
     });
 
@@ -164,21 +147,13 @@ d3.csv("data/hexagon_data_with_coords.csv").then((data) => {
 
     // Pick Random Listener
     d3.select("#shuffle-button").on("click", (event) => {
-        // TODO: Dispatch random selection event
-
         let randomPoint = networkGraph.data[Math.floor(Math.random() * networkGraph.data.length)];
         networkGraph.clickedSet = randomPoint;
-        // clear search input
+        // Clear search input
         d3.select("#search-input").node().value = "";
         networkGraph.updateVis();
         dispatcher.call('cardData', event, [randomPoint, null]);
-        console.log("Pick random button clicked!");
     });
-
-
-    // Instantiate the ColorChart with the transformed color data
-
-
 
 });
 

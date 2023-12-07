@@ -43,7 +43,6 @@ class ColorChart {
 
         // Function to darken a color
         function darkenColor(colorStr) {
-            // Assumes colorStr is of the form "#rrggbb"
             let r = Math.max(0, parseInt(colorStr.substring(1, 3), 16) - 50);
             let g = Math.max(0, parseInt(colorStr.substring(3, 5), 16) - 50);
             let b = Math.max(0, parseInt(colorStr.substring(5, 7), 16) - 50);
@@ -62,8 +61,6 @@ class ColorChart {
             })
             .on('click', function (event, d) {
                 chart.activeColors = new Set();
-                console.log(chart.activeColors);
-                console.log(chart.selectedColors);
 
                 if (chart.selectedColors.has(d)) {
                     chart.selectedColors.delete(d);
@@ -77,16 +74,14 @@ class ColorChart {
             });
 
         // Append the main square (lego base) to the group
-
-
         legoGroup.append('rect')
             .attr('width', chart.config.squareSize)
             .attr('height', chart.config.squareSize)
             .style('fill', d => `#${d}`)
-            .attr('stroke', d => darkenColor(`#${d}`)) // Darken the fill color for the stroke
+            .attr('stroke', d => darkenColor(`#${d}`))
             .attr('stroke-width', 1.75)
             .attr('opacity', d => (chart.hoveredColor && chart.hoveredColor === d) || chart.activeColors.size === 0 || chart.activeColors.has(d) ? 1 : 0.2) // Store original opacity
-            .attr('class', 'lego-rect') // Add a class for styling;
+            .attr('class', 'lego-rect')
             .on('mouseover', function (event, d) {
                 chart.hoveredColor = d;
                 chart.updateOpacity(d);
@@ -97,16 +92,8 @@ class ColorChart {
             }
             );
 
-
-
-
         // Define the size and spacing of the bumps
         let bumpSize = chart.config.squareSize / 2; // Diameter of the bump
-
-        // Calculate the gap by dividing the total remaining space by 3 (two gaps at the edges and one in the middle)
-        //let totalBumpWidth = bumpSize;
-        let gap = (chart.config.squareSize - 3 * bumpSize) / 2;
-        let initialOffset = gap;
 
         // Calculate the x and y position for the bumps on a 2x2 lego brick
         let bumpPositions = [
@@ -114,14 +101,12 @@ class ColorChart {
                 x: chart.config.squareSize / 2,
                 y: chart.config.squareSize / 2
             }
-
-
         ];
+
         // Append circles (lego bumps) to the group
-        // Append a filter element to the SVG
         var defs = legoGroup.append("defs");
-
-
+        
+        // Append a filter element to the SVG
         var dropShadowFilter = defs.append('svg:filter')
             .attr('id', 'drop-shadow')
             .attr('filterUnits', "userSpaceOnUse")
@@ -129,7 +114,7 @@ class ColorChart {
             .attr('height', '250%');
 
         dropShadowFilter.append('svg:feGaussianBlur')
-            .attr('in', 'SourceAlpha') // Use alpha channel of source graphic for blur
+            .attr('in', 'SourceAlpha')
             .attr('stdDeviation', 2)
             .attr('result', 'blur-out');
 
@@ -144,7 +129,7 @@ class ColorChart {
             .attr('result', 'shadow-out')
             .append('feFuncA')
             .attr('type', 'linear')
-            .attr('slope', 0.2); // Adjust the alpha value (opacity) of the shadow
+            .attr('slope', 0.2);
 
         dropShadowFilter.append('svg:feBlend')
             .attr('in', 'SourceGraphic')
@@ -158,15 +143,14 @@ class ColorChart {
                 .attr('cy', pos.y)
                 .attr('r', bumpSize / 2)
                 .style('fill', d => `#${d}`)
-                .attr('stroke', d => darkenColor(`#${d}`)) // Darken the fill color for the stroke
+                .attr('stroke', d => darkenColor(`#${d}`))
                 .attr('stroke-width', 1.5)
-                .style("filter", "url(#drop-shadow)"); // Apply the drop shadow filter
+                .style("filter", "url(#drop-shadow)");
         });
 
-
-        // Add any additional styling or interactivity as required
     }
 
+    // Updates opacity based on selected / not selected
     updateOpacity(color) {
         let chart = this;
         chart.svg.selectAll('.lego-group')
@@ -182,7 +166,6 @@ class ColorChart {
                 }
             });
 
-
     }
 
     // Method to update chart if needed
@@ -192,9 +175,5 @@ class ColorChart {
         this.drawSquares();
         this.updateOpacity();
     }
-
-
-
-
 
 }
