@@ -1,4 +1,4 @@
-# Building Bricks: A LEGO Project
+# Building Bricks: A LEGO Project: Awarded Overall winner
 
 Explore our project here: [Project Link](https://www.students.cs.ubc.ca/~cs-447/23Sep/fame/projects/g10/index.html)
 
